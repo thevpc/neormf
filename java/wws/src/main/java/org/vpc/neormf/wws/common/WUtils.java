@@ -1,0 +1,896 @@
+package org.vpc.neormf.wws.common;
+
+import org.vpc.neormf.commons.util.IOUtils;
+import org.vpc.neormf.commons.util.StringUtils;
+import org.vpc.neormf.commons.types.BooleanType;
+import org.vpc.neormf.wws.webform.datatype.BooleanTypeHtmlSupport;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * Classe utilitaire d'ordre general
+ *
+ * @author tbensalah (Taha Ben Salah)
+ * @creation_date date 20/01/2004
+ * @last_modification_date date 21/01/2004
+ * @status pour validation
+ */
+public final class WUtils {
+    private HttpServletRequest request;
+    public static final String CONFIG_MAX_STR_LENGTH = WUtils.class.getName() + ".MAX_STR_LENGTH";
+    public static final String CONFIG_NULL_STRING = WUtils.class.getName() + ".NULL_STRING";
+    public static final SimpleDateFormat COMPACT_TIMESTAMP = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    public static final SimpleDateFormat DAY_MONTH_FORMAT = new SimpleDateFormat("dd/MM");
+    /**
+     * nombre paximum de caracteres e afficher.
+     * Au del de cette taille, une troncature
+     * sera realise sur la chaine e afficher en rajoutant '...'
+     */
+    public static int MAX_STR_LENGTH = -1;
+    /**
+     * Separateur par defaut pour le formattage en CSV
+     *
+     * @see WUtils#toCsv(String)
+     */
+    public static char CSV_SEPARATOR = ',';
+    /**
+     * Cotes par defaut pour le formattage en CSV
+     *
+     * @see WUtils#toCsv(String)
+     */
+    public static char CSV_COTES = '"';
+
+    public WUtils(HttpServletRequest request) {
+        this.request = request;
+    }
+
+    /**
+     * transorme le chemin relatif en chemin par rapport au contexte du webapp.
+     * <p/>
+     * <BR> lorsque le path est nul, la page d'acceuil est retournee
+     *
+     * @param request de la jsp
+     * @param path    chemin a transormer, par exemple 'images/Logo/gif'
+     * @return le chemin relatif au contexte du webapp, (pour l'exemple donne le resultat est '/qc/images/Logo/gif'
+     */
+    public static String getPath(HttpServletRequest request, String path) {
+        String c = request.getContextPath();
+        if (path == null) {
+            return c;
+        }
+        return c + "/" + path;
+    }
+
+    public String getPath(String path) {
+        return getPath(request, path);
+    }
+
+    /**
+     * formatter un objet e afficher
+     *
+     * @param request de la jsp
+     * @param cell    l'objet e formatter
+     * @return toDisplayable(cell,"-",MAX_TABLE_CELL_STR_LENGTH)
+     * @see WUtils#toDisplayable(HttpServletRequest,Object,String ,int )
+     */
+    public static String toDisplayable(HttpServletRequest request, Object cell) {
+        return toDisplayable(request, cell,
+                (String) resolveLocalizedStringByName(request, CONFIG_NULL_STRING, "-"),
+                ((Integer) resolveLocalizedIntegerByName(request, CONFIG_MAX_STR_LENGTH, new Integer(MAX_STR_LENGTH))).intValue()
+        );
+    }
+
+    /**
+     * formatter un objet e afficher
+     *
+     * @param request de la jsp            Object maxStr=resolveLocalizedIntegerByName(request,CONFIG_NULL_STRING,"-");
+     *                int maxStrValue=-1;
+     *                if(maxStr instanceof Number){
+     *                maxStrValue=
+     *                }
+     * @param cell    l'objet e formatter
+     * @return toDisplayable(cell, defaultNullValue, MAX_TABLE_CELL_STR_LENGTH)
+     * @see WUtils#toDisplayable(HttpServletRequest,Object,String ,int )
+     */
+    public static String toDisplayable(HttpServletRequest request, Object cell, String defaultNullValue) {
+        return toDisplayable(request, cell, defaultNullValue, MAX_STR_LENGTH);
+    }
+
+    /**
+     * formatter un objet e afficher
+     * formatter un objet e afficher depuis une clef d'internationalisation
+     *
+     * @param request de la jsp
+     * @param key     d'internationalisation
+     * @param params  parametres du message
+     * @return un objet formatte en chaine
+     */
+    public static String getDisplayable(HttpServletRequest request, String key, Object[] params) {
+        return toDisplayable(request, MessageFormat.format(WMessages.getString(key, request), params), "Unknown", -1);
+    }
+
+
+    /**
+     * formatter un objet e afficher depuis une clef d'internationalisation
+     *
+     * @param request de la jsp
+     * @param key     d'internationalisation
+     * @return un objet formatte en chaine
+     */
+    public static String getDisplayable(HttpServletRequest request, String key) {
+        return toDisplayable(request, WMessages.getString(key, request), "Unknown", -1);
+    }
+
+    /**
+     * formatter un objet e afficher
+     * formatter un objet e afficher depuis une clef d'internationalisation
+     *
+     * @param request   de la jsp
+     * @param key       d'internationalisation
+     * @param maxLength longueur maximale de la chaine resulatnte
+     * @return un objet formatte en chaine
+     */
+    public static String getDisplayable(HttpServletRequest request, String key, int maxLength) {
+        return toDisplayable(request, WMessages.getString(key, request), "Unknown", maxLength);
+    }
+
+    /**
+     * formatter un objet e afficher
+     * en l'ocuurence, un Java NULL sera remplacee par <code>defaultNullValue</code>,
+     * et les chaines plus longues que <code>maxLength</code> seront tronquee et
+     * un '...' sera rajoute en fin de chaine.
+     *
+     * @param request          de la jsp
+     * @param cell             l'objet e formatter
+     * @param defaultNullValue valeur si cell est nul
+     * @param maxLength        longueur maximale de la chaine resulatnte
+     * @return un objet formatte en chaine
+     */
+    public static String toDisplayable(HttpServletRequest request, Object cell, String defaultNullValue, int maxLength) {
+        if (cell == null) {
+            return defaultNullValue;
+        } else if (cell instanceof Date) {
+            return getDateFormat(request).format((Date) cell);
+//            StringConverter.valueOf((java.sql.Timestamp)cell);
+        } else if (cell instanceof Double) {
+            return cell.toString();
+            // cela pose prblemle de virgule
+//            return StringConverter.valueOf((Double) cell);
+        } else if (cell instanceof Integer) {
+            return cell.toString();
+            // cela pose prblemle de virgule
+//            return StringConverter.valueOf((Integer) cell);
+        } else {
+            String str = cell.toString();
+            if (maxLength > 0 && str.length() >= maxLength) {
+                str = str.substring(0, maxLength) + "...";
+            }
+            return str;
+        }
+    }
+
+    /**
+     * une chaine tronquee si sa longueur depasse maxLength
+     *
+     * @param cell
+     * @param defaultNullValue
+     * @param maxLength
+     * @return Displayable
+     */
+    public static String toDisplayable(String cell, String defaultNullValue, int maxLength) {
+        if (cell == null) {
+            return defaultNullValue;
+        } else {
+            String str = cell.toString();
+            if (maxLength > 0 && str.length() >= maxLength) {
+                str = str.substring(0, maxLength) + "...";
+            }
+            return str;
+        }
+    }
+
+    /**
+     * formatter un objet e afficher en Html
+     *
+     * @param request          de la jsp
+     * @param cell             object e formatter
+     * @param defaultNullValue
+     * @param maxLength
+     * @return plainTextToHtml(toDisplayable(cell,defaultNullValue,maxLength));
+     * @see WUtils#toDisplayable(javax.servlet.http.HttpServletRequest, Object)
+     * @see WUtils#plainTextToHtml(String)
+     */
+    public static String toHtml(HttpServletRequest request, Object cell, String defaultNullValue, int maxLength) {
+        return plainTextToHtml(toDisplayable(request, cell, defaultNullValue, maxLength));
+    }
+
+    /**
+     * formatter un objet e afficher en Html
+     *
+     * @param request          de la jsp
+     * @param cell             object e formatter
+     * @param defaultNullValue object e formatter
+     * @return plainTextToHtml(toDisplayable(cell,defaultNullValue));
+     * @see WUtils#toDisplayable(javax.servlet.http.HttpServletRequest, Object, String, int)
+     * @see WUtils#plainTextToHtml(String)
+     */
+    public static String toHtml(HttpServletRequest request, Object cell, String defaultNullValue) {
+        return plainTextToHtml(toDisplayable(request, cell, defaultNullValue));
+    }
+
+//    public static String addHtmlCotes(String str) {
+//        StringBuffer sb = new StringBuffer();
+//        int max = str.length();
+//        for (int i = 0; i < max; i++) {
+//            char c = str.charAt(i);
+//            if (c == '\'') {
+//                sb.append("''");
+//            } else {
+//                sb.append(c);
+//            }
+//        }
+//        return sb.toString();
+//    }
+
+    /**
+     * formatter un objet e afficher en Html
+     *
+     * @param request de la jsp
+     * @param cell    object e formatter
+     * @return plainTextToHtml(toDisplayable(cell));
+     * @see WUtils#toDisplayable(javax.servlet.http.HttpServletRequest, Object, String, int)
+     * @see WUtils#plainTextToHtml(String)
+     */
+    public static String toHtml(HttpServletRequest request, Object cell) {
+
+        return plainTextToHtml(toDisplayable(request, cell));
+    }
+
+    public static String plainTextToCotedHtml(String plainStr) {
+        StringBuffer sb = new StringBuffer("\"");
+        for (int i = 0; i < plainStr.length(); i++) {
+            char c = plainStr.charAt(i);
+            // do not use Character.isLetterOrDigit(str.charAt(i)) || str.charAt(i)==' '
+            if (c == '\"') {
+                sb.append("&#").append((int) plainStr.charAt(i)).append(";");
+            }else{
+                sb.append(plainStr.charAt(i));
+            }
+        }
+        sb.append("\"");
+        return sb.toString();
+    }
+
+    /**
+     * transforme une chaine texte en son equivalent Html
+     *
+     * @param plainStr text e transformer
+     * @return l'equivalent html de plainStr en traitant le cas des caracteres speciaux
+     */
+    public static String plainTextToHtml(String plainStr) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < plainStr.length(); i++) {
+            char c = plainStr.charAt(i);
+            // do not use Character.isLetterOrDigit(str.charAt(i)) || str.charAt(i)==' '
+            if (c == '&') {
+                sb.append("&amp;");
+            } else if (c == '<') {
+                sb.append("&lt;");
+            } else if (c == '>') {
+                sb.append("&gt;");
+            } else if (c == '\"') {
+                sb.append("&quot;");
+            } else if (c == ' ') {
+                sb.append("&nbsp;");
+            } else if (c =='é') {
+                sb.append("&eacute;");
+            } else if (c == 'è') {
+                sb.append("&egrave;");
+            } else if (c == 'ê') {
+                sb.append("&ecirc;");
+            } else if (c == 'à') {
+                sb.append("&agrave;");
+            } else if (c == '\n') {
+                sb.append("<BR>");
+            } else if ("+=*/#{}()[]-_@".indexOf(c)>=0 || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
+                sb.append(plainStr.charAt(i));
+            } else {
+                sb.append("&#").append((int) plainStr.charAt(i)).append(";");
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String plainTextToHtml0(String plainStr) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < plainStr.length(); i++) {
+            char c = plainStr.charAt(i);
+            // do not use Character.isLetterOrDigit(str.charAt(i)) || str.charAt(i)==' '
+            if (c == '&') {
+                sb.append("&amp;");
+            } else if (c == '<') {
+                sb.append("&lt;");
+            } else if (c == '>') {
+                sb.append("&gt;");
+            } else if (c == '\"') {
+                sb.append("&quot;");
+            } else if (c == ' ') {
+                sb.append("&nbsp;");
+            } else if (c == '\n') {
+                sb.append("\n");
+            } else if (c == '\r') {
+                sb.append("\r");
+            } else if ("+=*/#{}()[]-_@".indexOf(c)>=0 || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
+                sb.append(plainStr.charAt(i));
+            } else {
+                sb.append("&#").append((int) plainStr.charAt(i)).append(";");
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Recuperation de chemin du fichier help
+     * l'url doit se trouver dans le fichier properties recupere
+     * avec la classe Messages au niveau de la clef CONFIG.HELP_URL
+     */
+    public static String getHelpPath(HttpServletRequest request) {
+        return getHelpPath(request, null);
+    }
+
+    /**
+     * Recuperation de chemin du fichier help pour la section donnee
+     * l'url doit se trouver dans le fichier properties recupere
+     * avec la classe Messages au niveau de la clef <B>CONFIG.HELP_URL.<CODE>&lt;helpSectionCode&gt;</CODE></B>
+     */
+    public static String getHelpPath(HttpServletRequest request, String helpSectionCode) {
+        String id = (helpSectionCode == null || helpSectionCode.length() == 0) ? "" : "." + helpSectionCode;
+        String h = WMessages.getString("config.helpUrl" + id, request);
+        if ("-err-".equals(h)) {
+            if (!(helpSectionCode == null || helpSectionCode.length() == 0)) {
+                return getHelpPath(request, null);
+            }
+            return "help.html";
+        }
+        return h;
+    }
+
+    /**
+     * formatter au format CSV
+     *
+     * @param cell texte e formatter
+     * @return toCsv(cell,CSV_SEPARATOR, CSV_COTES);
+     */
+    public static String toCsv(String cell) {
+        return toCsv(cell, CSV_SEPARATOR, CSV_COTES);
+    }
+
+    /**
+     * formatter au format CSV
+     *
+     * @param cell      texte e formatter
+     * @param separator le separateur
+     * @param cotes     les cotes " ou '
+     * @return texte formatte au format CSV
+     */
+    public static String toCsv(String cell, char separator, char cotes) {
+        if (cell == null || cell.length() == 0) {
+            return "";
+        } else if (cell.indexOf(separator) >= 0 || cell.indexOf(cotes) >= 0) {
+            StringBuffer sb = new StringBuffer();
+            sb.append(cotes);
+            for (int i = 0; i < cell.length(); i++) {
+                char c = cell.charAt(i);
+                if (c == cotes) {
+                    sb.append(c);
+                }
+                sb.append(c);
+            }
+            sb.append(cotes);
+            return sb.toString();
+        } else {
+            return cell;
+        }
+    }
+
+    /**
+     * recuperation du format de la date
+     *
+     * @param request
+     * @return current DateFormat
+     */
+    public static DateFormat getDateFormat(HttpServletRequest request) {
+        DateFormat dateFormat = (DateFormat) resolveLocalizedDateFormatByName(request, WUtils.class.getName() + ".DATE_FORMAT", null);
+        return dateFormat != null ? dateFormat : DateFormat.getDateInstance(DateFormat.SHORT, WMessages.getLocale(request, true));
+    }
+
+    public static DateFormat getTimeFormat(HttpServletRequest request) {
+        DateFormat dateFormat = (DateFormat) resolveLocalizedDateFormatByName(request, WUtils.class.getName() + ".TIME_FORMAT", null);
+        return dateFormat != null ? dateFormat : DateFormat.getTimeInstance(DateFormat.SHORT, WMessages.getLocale(request, true));
+    }
+
+    public static Object resolveObjectByName(HttpServletRequest request, String name, Object defaultValue) {
+        Object o = request.getAttribute(name);
+        if (o == null) {
+            o = request.getSession().getAttribute(name);
+            if (o == null) {
+                o = getWebEnvVar(name, null);
+            }
+        }
+        return o == null ? defaultValue : o;
+    }
+
+    public static Integer resolveLocalizedIntegerByName(HttpServletRequest request, String name, Integer defaultValue) {
+        Object i = resolveLocalizedObjectByName(request, name, defaultValue);
+        if (i instanceof String) {
+            if (i.toString().length() == 0) {
+                return defaultValue;
+            } else {
+                return new Integer(i.toString());
+            }
+        } else {
+            return (Integer) i;
+        }
+    }
+
+    public static DateFormat resolveLocalizedDateFormatByName(HttpServletRequest request, String name, DateFormat defaultValue) {
+        Object i = resolveLocalizedObjectByName(request, name, defaultValue);
+        if (i instanceof String) {
+            if (i.toString().length() == 0) {
+                return defaultValue;
+            } else {
+                return new SimpleDateFormat(i.toString());
+            }
+        } else {
+            return (DateFormat) i;
+        }
+    }
+
+    public static String resolveLocalizedStringByName(HttpServletRequest request, String name, String defaultValue) {
+        return (String) resolveLocalizedObjectByName(request, name, defaultValue);
+    }
+
+    public static Object resolveLocalizedObjectByName(HttpServletRequest request, String name, Object defaultValue) {
+        Object o = (String) request.getAttribute(name);
+        if (o == null) {
+            o = request.getSession().getAttribute(name);
+            if (o == null) {
+                o = WMessages.getString(name, request, null);
+                if (o == null) {
+                    o = getWebEnvVar(name, null);
+                }
+            }
+        }
+        return o != null ? o : defaultValue;
+    }
+
+    public DateFormat getDateFormat() {
+        return getDateFormat(request);
+    }
+
+    /**
+     * recuperation de la date/heure
+     * cette methode devrait etre deplacee vers la classe Messages
+     * (projet cvs WebLangCpnt)
+     *
+     * @param request
+     * @return DateTimeFormat
+     */
+    public static DateFormat getDateTimeFormat(HttpServletRequest request) {
+        DateFormat dateFormat = (DateFormat) resolveLocalizedDateFormatByName(request, WUtils.class.getName() + ".DATE_TIME_FORMAT", null);
+        return dateFormat != null ? dateFormat : DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, WMessages.getLocale(request, true));
+    }
+
+    /**
+     * recuperation de la date/heure
+     * cette methode devrait etre deplacee vers la classe Messages
+     * (projet cvs WebLangCpnt)
+     *
+     * @param request
+     * @return DateTimeFormat
+     */
+    public static DateFormat getDayMonthFormat(HttpServletRequest request) {
+        DateFormat dateFormat = (DateFormat) resolveLocalizedDateFormatByName(request, WUtils.class.getName() + ".DAY_MONTH_FORMAT", null);
+        return dateFormat != null ? dateFormat : DAY_MONTH_FORMAT;
+    }
+
+    public DateFormat getDateTimeFormat() {
+        return getDateTimeFormat(request);
+    }
+
+    public DateFormat getTimeFormat() {
+        return getTimeFormat(request);
+    }
+
+    /**
+     * message Html pour un code de message depuis les properties
+     *
+     * @param request de la jsp
+     * @param msgKey  code message
+     * @return message Html pour un code de message depuis les properties
+     */
+    public static String getHtml(HttpServletRequest request, String msgKey) {
+        return toHtml(request, WMessages.getString(msgKey, request), "", -1);
+    }
+
+
+    /**
+     * message Html pour un code de message depuis les properties
+     *
+     * @param request       de la jsp
+     * @param msgKey        code message
+     * @param msgParameters parametres du message
+     * @return message Html pour un code de message depuis les properties
+     */
+    public static String getHtml(HttpServletRequest request, String msgKey, Object[] msgParameters) {
+        String pattern = WMessages.getString(msgKey, request);
+        return toHtml(request, MessageFormat.format(pattern, msgParameters), "", -1);
+    }
+
+    /**
+     * message CSV pour un code de message depuis les properties
+     *
+     * @param request de la jsp
+     * @param msgKey  code message
+     * @return message Html pour un code de message depuis les properties
+     */
+    public static String getCsv(HttpServletRequest request, String msgKey) {
+        return toCsv(WMessages.getString(msgKey, request));
+    }
+
+    public String getCsv(String msgKey) {
+        return toCsv(WMessages.getString(msgKey, request));
+    }
+
+    /**
+     * message CSV pour un code de message depuis les properties
+     *
+     * @param request       de la jsp
+     * @param msgKey        code message
+     * @param msgParameters parametres du message
+     * @return message Html pour un code de message depuis les properties
+     */
+    public static String getCsv(HttpServletRequest request, String msgKey, Object[] msgParameters) {
+        String pattern = WMessages.getString(msgKey, request);
+        return toCsv(MessageFormat.format(pattern, msgParameters));
+    }
+
+    public String getCsv(String msgKey, Object[] msgParameters) {
+        String pattern = WMessages.getString(msgKey, request);
+        return toCsv(MessageFormat.format(pattern, msgParameters));
+    }
+
+    /**
+     * revoi (v1==v2 || (v1!=null &&v1.equals(v2))) ? valueWhenEqual : valueWhenDifferent
+     *
+     * @param v1
+     * @param v2
+     * @param valueWhenEqual
+     * @param valueWhenDifferent
+     * @return (v1==v2 || (v1!=null &&v1.equals(v2))) ? valueWhenEqual : valueWhenDifferent
+     */
+    public static Object valueByComp(Object v1, Object v2, Object valueWhenEqual, Object valueWhenDifferent) {
+        return (v1 == v2 || (v1 != null && v1.equals(v2))) ? valueWhenEqual : valueWhenDifferent;
+    }
+
+    /**
+     * return le chemin absolu de l'image dont la clef dans le fichier ressource est <CODE>imageKey</CODE>
+     *
+     * @param request
+     * @param imageKey
+     * @return ImageUrl
+     */
+    public static String getImageUrl(HttpServletRequest request, String imageKey) {
+        String str = WMessages.getString("IMAGE." + imageKey, request);
+        return getPath(request, str);
+    }
+
+    public String getImageUrl(String imageKey) {
+        String str = WMessages.getString("IMAGE." + imageKey, request);
+        return getPath(request, str);
+    }
+
+    /**
+     * return la valeur d'un parametre du context web
+     * <BR>
+     * <code>
+     * &lt;env-entry&gt;<BR>
+     * &lt;description&gt;chemin d'upload&lt;/description&gt;<BR>
+     * &lt;env-entry-name&gt;upload&lt;/env-entry-name&gt;<BR>
+     * &lt;env-entry-value&gt;c:\temp\&lt;/env-entry-value&gt;<BR>
+     * &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;<BR>
+     * &lt;/env-entry&gt;
+     * </code>
+     *
+     * @param key
+     * @param defaultValue
+     * @return WebEnvVar
+     */
+    public static Object getWebEnvVar(String key, Object defaultValue) {
+        try {
+            InitialContext context = new InitialContext();
+            Object v = context.lookup("java:comp/env/" + key);
+            return v == null ? defaultValue : v;
+        } catch (NamingException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
+     * return la valeur d'un parametre du context web
+     * <BR>
+     * <code>
+     * &lt;env-entry&gt;<BR>
+     * &lt;description&gt;chemin d'upload&lt;/description&gt;<BR>
+     * &lt;env-entry-name&gt;upload&lt;/env-entry-name&gt;<BR>
+     * &lt;env-entry-value&gt;c:\temp\&lt;/env-entry-value&gt;<BR>
+     * &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;<BR>
+     * &lt;/env-entry&gt;
+     * </code>
+     *
+     * @param key
+     * @param defaultValue
+     * @return StringWebEnvVar
+     */
+    public static String getStringWebEnvVar(String key, String defaultValue) {
+        return (String) getWebEnvVar(key, defaultValue);
+    }
+
+    /**
+     * return la valeur d'un parametre du context web
+     * <BR>
+     * <code>
+     * &lt;env-entry&gt;<BR>
+     * &lt;description&gt;types de fichiers acceptables&lt;/description&gt;<BR>
+     * &lt;env-entry-name&gt;fileTypes&lt;/env-entry-name&gt;<BR>
+     * &lt;env-entry-value&gt;doc,text,gif&lt;/env-entry-value&gt;<BR>
+     * &lt;env-entry-type&gt;java.lang.String&lt;/env-entry-type&gt;<BR>
+     * &lt;/env-entry&gt;
+     * </code>
+     *
+     * @param key
+     * @param defaultValue
+     * @return StringArrayWebEnvVar
+     */
+    public static String[] getStringArrayWebEnvVar(String key, String separators, boolean returnNulls, String[] defaultValue) {
+        String s = (String) getWebEnvVar(key, defaultValue);
+        if (s == null) {
+            return defaultValue;
+        }
+        return StringUtils.split(s, separators, returnNulls);
+    }
+
+    /**
+     * return la valeur d'un parametre du context web
+     * <BR>
+     * <code>
+     * &lt;env-entry&gt;<BR>
+     * &lt;description&gt;un nombre&lt;/description&gt;<BR>
+     * &lt;env-entry-name&gt;nbr&lt;/env-entry-name&gt;<BR>
+     * &lt;env-entry-value&gt;15&lt;/env-entry-value&gt;<BR>
+     * &lt;env-entry-type&gt;java.lang.Integer&lt;/env-entry-type&gt;<BR>
+     * &lt;/env-entry&gt;
+     * </code>
+     *
+     * @param key
+     * @param defaultValue
+     * @return IntegerWebEnvVar
+     */
+    public static Integer getIntegerWebEnvVar(String key, Integer defaultValue) {
+        return (Integer) getWebEnvVar(key, defaultValue);
+    }
+
+    /**
+     * return la valeur d'un parametre du context web
+     * <BR>
+     * <code>
+     * &lt;env-entry&gt;<BR>
+     * &lt;description&gt;un nombre&lt;/description&gt;<BR>
+     * &lt;env-entry-name&gt;nbr&lt;/env-entry-name&gt;<BR>
+     * &lt;env-entry-value&gt;15&lt;/env-entry-value&gt;<BR>
+     * &lt;env-entry-type&gt;java.lang.Integer&lt;/env-entry-type&gt;<BR>
+     * &lt;/env-entry&gt;
+     * </code>
+     *
+     * @param key
+     * @param defaultValue
+     * @return IntWebEnvVar
+     */
+    public static int getIntWebEnvVar(String key, int defaultValue) {
+        return ((Integer) getWebEnvVar(key, new Integer(defaultValue))).intValue();
+    }
+
+    /**
+     * return la valeur d'un parametre du context web
+     * <BR>
+     * <code>
+     * &lt;env-entry&gt;<BR>
+     * &lt;description&gt;un nombre&lt;/description&gt;<BR>
+     * &lt;env-entry-name&gt;nbr&lt;/env-entry-name&gt;<BR>
+     * &lt;env-entry-value&gt;15.2&lt;/env-entry-value&gt;<BR>
+     * &lt;env-entry-type&gt;java.lang.Double&lt;/env-entry-type&gt;<BR>
+     * &lt;/env-entry&gt;
+     * </code>
+     *
+     * @param key
+     * @param defaultValue
+     * @return DoubleWebEnvVar
+     */
+    public static Double getDoubleWebEnvVar(String key, Double defaultValue) {
+        return (Double) getWebEnvVar(key, defaultValue);
+    }
+
+    /**
+     * return la valeur d'un parametre du context web
+     * <BR>
+     * <code>
+     * &lt;env-entry&gt;<BR>
+     * &lt;description&gt;un nombre&lt;/description&gt;<BR>
+     * &lt;env-entry-name&gt;nbr&lt;/env-entry-name&gt;<BR>
+     * &lt;env-entry-value&gt;15.2&lt;/env-entry-value&gt;<BR>
+     * &lt;env-entry-type&gt;java.lang.Double&lt;/env-entry-type&gt;<BR>
+     * &lt;/env-entry&gt;
+     * </code>
+     *
+     * @param key
+     * @param defaultValue
+     * @return DoubleWebEnvVar
+     */
+    public static double getDoubleWebEnvVar(String key, double defaultValue) {
+        return ((Double) getWebEnvVar(key, new Double(defaultValue))).doubleValue();
+    }
+
+    /**
+     * return la valeur d'un parametre du context web
+     * <BR>
+     * <code>
+     * &lt;env-entry&gt;<BR>
+     * &lt;description&gt;oui/nom&lt;/description&gt;<BR>
+     * &lt;env-entry-name&gt;yesno&lt;/env-entry-name&gt;<BR>
+     * &lt;env-entry-value&gt;true&lt;/env-entry-value&gt;<BR>
+     * &lt;env-entry-type&gt;java.lang.Boolean&lt;/env-entry-type&gt;<BR>
+     * &lt;/env-entry&gt;
+     * </code>
+     *
+     * @param key
+     * @param defaultValue
+     * @return BooleanWebEnvVar
+     */
+    public static boolean getBooleanWebEnvVar(String key, boolean defaultValue) {
+        return ((Boolean) getWebEnvVar(key, defaultValue ? Boolean.TRUE : Boolean.FALSE)).booleanValue();
+    }
+
+    /**
+     * le chemin en webapp ou null si le chemin n'est pas sous la racine du webapp
+     *
+     * @param servletContext
+     * @param absoluteFile
+     * @return WebPath
+     */
+    public static String getWebPath(HttpServletRequest request, ServletContext servletContext, File absoluteFile) {
+        return request.getContextPath() + "/" + IOUtils.getRelativePath(new File(servletContext.getRealPath("/")), absoluteFile);
+    }
+
+    public String getWebPath(ServletContext servletContext, File absoluteFile) {
+        return request.getContextPath() + "/" + IOUtils.getRelativePath(new File(servletContext.getRealPath("/")), absoluteFile);
+    }
+
+    public int getIntegerRequest(String requestOrParamName, int defaultValue) {
+        return getIntegerRequest(request, requestOrParamName, defaultValue);
+    }
+
+    public static int getIntegerRequest(HttpServletRequest request, String requestOrParamName, int defaultValue) {
+        try {
+            Integer i = (Integer) request.getAttribute(requestOrParamName);
+            if (i != null) {
+                return i.intValue();
+            }
+            i = request.getParameter(requestOrParamName) != null ? new Integer(request.getParameter(requestOrParamName)) : null;
+            if (i != null) {
+                return i.intValue();
+            }
+        } catch (NumberFormatException e) {
+        }
+        return defaultValue;
+    }
+
+    public java.util.Date getDateRequest(String requestOrParamName, java.util.Date defaultValue) {
+        return getDateRequest(request, requestOrParamName, defaultValue);
+    }
+
+    public static java.util.Date getDateRequest(HttpServletRequest request, String requestOrParamName, java.util.Date defaultValue) {
+        try {
+            java.util.Date i = (java.util.Date) request.getAttribute(requestOrParamName);
+            if (i != null) {
+                return i;
+            }
+            try {
+                String parameter = request.getParameter(requestOrParamName);
+                i = parameter != null && parameter.length()>0 ? getDateFormat(request).parse(parameter) : null;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (i != null) {
+                return i;
+            }
+        } catch (NumberFormatException e) {
+        }
+        return defaultValue;
+    }
+
+    public java.sql.Date getDateRequest(String requestOrParamName, java.sql.Date defaultValue) {
+        return getDateRequest(request, requestOrParamName, defaultValue);
+    }
+
+    public static java.sql.Date getDateRequest(HttpServletRequest request, String requestOrParamName, java.sql.Date defaultValue) {
+        java.util.Date d = getDateRequest(request, requestOrParamName, (java.util.Date) defaultValue);
+        if (d == null) {
+            return null;
+        }
+        return new java.sql.Date(d.getTime());
+    }
+
+    public String getStringRequest(String requestOrParamName, String defaultValue) {
+        return getStringRequest(request, requestOrParamName, defaultValue);
+    }
+
+    public static String getStringRequest(HttpServletRequest request, String requestOrParamName, String defaultValue) {
+        String i = (String) request.getAttribute(requestOrParamName);
+        if (i != null) {
+            return i;
+        }
+        i = request.getParameter(requestOrParamName) != null ? request.getParameter(requestOrParamName) : null;
+        if (i != null) {
+            return i;
+        }
+        return defaultValue;
+    }
+
+    public static boolean getBooleanRequest(HttpServletRequest request, String requestOrParamName, boolean defaultValue) {
+        Boolean i = (Boolean) request.getAttribute(requestOrParamName);
+        if (i != null) {
+            return i.booleanValue();
+        }
+        return new BooleanTypeHtmlSupport().convertHtmlStringToBolean(new String[]{request.getParameter("status_oqp")}, BooleanType.BOOL_NULLABLE, request, defaultValue);
+    }
+
+    /**
+     * lookup object in
+     *    request.getAttribute()
+     *    request.getParameter()
+     *    request.getSession().getAttribute()
+     *    request.getSession().getServletContext().getAttribute()
+     * @param request
+     * @param requestOrParamName
+     * @param defaultValue
+     * @return the first value found
+     */
+    public static Object getObject(HttpServletRequest request, String requestOrParamName, Object defaultValue) {
+        Object i = request.getAttribute(requestOrParamName);
+        if (i != null) {
+            return i;
+        }
+        i = request.getParameter(requestOrParamName) != null ? request.getParameter(requestOrParamName) : null;
+        if (i != null) {
+            return i;
+        }
+        i = request.getSession().getAttribute(requestOrParamName);
+        if (i != null) {
+            return i;
+        }
+        i = request.getSession().getServletContext().getAttribute(requestOrParamName);
+        if (i != null) {
+            return i;
+        }
+        return defaultValue;
+    }
+}

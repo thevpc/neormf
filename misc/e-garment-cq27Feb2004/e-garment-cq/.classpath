@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-beanutils.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-collections.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-dbcp.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-digester.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-fileupload.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-lang.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-logging.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-pool.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-resources.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-services.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/commons-validator.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/fwk.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/pdf.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/struts.jar"/>
+    <classpathentry kind="var" path="REALM" sourcepath="REALM"/>
+    <classpathentry kind="var" path="LOG4J"/>
+    <classpathentry kind="var" path="TOMCAT_SERVLET"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/camlang.jar"/>
+    <classpathentry kind="lib" path="webapp/WEB-INF/lib/cos.jar"/>
+    <classpathentry kind="output" path="webapp\WEB-INF\classes"/>
+</classpath>

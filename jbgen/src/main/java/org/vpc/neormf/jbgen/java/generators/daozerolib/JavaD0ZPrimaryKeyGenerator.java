@@ -1,0 +1,172 @@
+package org.vpc.neormf.jbgen.java.generators.daozerolib;
+
+import org.vpc.neormf.jbgen.JBGenMain;
+import org.vpc.neormf.jbgen.info.DAOInfo;
+import org.vpc.neormf.jbgen.dbsupport.DBColumn;
+import org.vpc.neormf.jbgen.projects.J2eeTarget;
+import org.vpc.neormf.jbgen.java.generators.JBGenDAOGenerator;
+import org.vpc.neormf.jbgen.java.model.javaclass.JavaClassSource;
+import org.vpc.neormf.jbgen.java.model.javaclass.JavaField;
+import org.vpc.neormf.jbgen.java.model.javaclass.JavaMethod;
+import org.vpc.neormf.jbgen.java.model.javaclass.JavaParam;
+import org.vpc.neormf.jbgen.java.util.JavaUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.NoSuchElementException;
+
+/**
+ * class presentation
+ *
+ * @author taha BEN SALAH (tbensalah)
+ * @version 1.0
+ * @copyrights (c) 2004, Vpc Open Source Foundary
+ * @project New Entreprise Object Relational Mapping Framework (neormf)
+ * @creation on Date: 24 mars 2004 Time: 17:11:33
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ */
+class JavaD0ZPrimaryKeyGenerator extends JBGenDAOGenerator {
+
+
+    public JavaD0ZPrimaryKeyGenerator(JBGenMain jbgen) {
+        super(jbgen);
+    }
+
+    public boolean accept(Connection connection, DAOInfo entityInfo) {
+        boolean bd = (
+                entityInfo.doGenerateBean(J2eeTarget.MODULE_DTO)
+//                        && entityInfo.doGenerateTables("table")
+        );
+        boolean be = false;/*(
+                entityInfo.doGenerateBean(J2eeTarget.MODULE_EJB+".entity-cmp-remote")
+                || entityInfo.doGenerateBean(J2eeTarget.MODULE_EJB+".entity-bmp-remote")
+                || entityInfo.doGenerateBean(J2eeTarget.MODULE_EJB+".entity-cmp-local")
+                || entityInfo.doGenerateBean(J2eeTarget.MODULE_EJB+".entity-bmp-local")
+                || (entityInfo.doGenerateBean(J2eeTarget.MODULE_DAO) && bd)
+                );*/
+        if (!bd && !be) {
+            return false;
+        }
+        boolean nopk = entityInfo.getPrimaryKeys().length == 0;
+        if (be && nopk && entityInfo.isUpdatable()) {
+            throw new RuntimeException("No primary key found for " + entityInfo.getBeanName());
+        } else {
+
+        }
+        return !nopk && (bd || be);
+    }
+
+    public void performExtraChecks(DAOInfo entityInfo) throws NoSuchElementException {
+        entityInfo.checkGenerateFilter(J2eeTarget.MODULE_DTO);
+    }
+
+    public void generate(Connection connection, DAOInfo entityInfo) throws SQLException, IOException {
+        File destFolder = new File(entityInfo.getProjectInfo().getModuleFolder(J2eeTarget.MODULE_DTO));
+        JavaClassSource theClass = new JavaClassSource();
+        theClass.setComments(entityInfo.getComments());
+        theClass.setModifiers("public");
+        theClass.setName(entityInfo.getDataKeyName());
+        theClass.setInterfaces(null);
+        theClass.setPackage(entityInfo.getDataPackage());
+        DBColumn[] pkColumns = entityInfo.getPrimaryKeys();
+        JavaParam[] constParams = new JavaParam[pkColumns.length];
+        StringBuilder constructorBody = new StringBuilder();
+        for (int i = 0; i < constParams.length; i++) {
+            constParams[i] = new JavaParam(pkColumns[i].getBeanFieldVar(),
+                    pkColumns[i].getBusinessDataTypeName(),
+                    null);
+            theClass.addField(new JavaField(constParams[i].getName(), constParams[i].getType(), null, "public", null));
+            constructorBody.append("this.").append(constParams[i].getName()).append("=").append(constParams[i].getName()).append(";\n");
+        }
+
+        theClass.addMethod(new JavaMethod(theClass.getName(), null, null, "public", null, "Constructor",
+                "super();"));
+
+        theClass.addMethod(new JavaMethod("hashCode", "int", null, "public", null,null,
+                "int hash = 17;\n" +
+                        "for (int i = keySize() - 1; i >= 0; i--) {\n" +
+                        "  hash = 31 * hash + keyPartAt(i).hashCode();\n" +
+                        "}\n" +
+                        "return hash;"));
+
+        theClass.addMethod(new JavaMethod("equals", "boolean", new JavaParam[]{new JavaParam("obj", "Object", null)}, "public",null, null,
+                "if (obj == null || getClass() != obj.getClass()) {\n" +
+                        "  return false;\n" +
+                        "}\n" +
+                        "for (int i = keySize() - 1; i >= 0; i--) {\n" +
+                        "  Object p1 = keyPartAt(i);\n" +
+                        "  Object p2 = ((" + theClass.getName() + ") obj).keyPartAt(i);\n" +
+                        "  if (!p1.equals(p2)) {\n" +
+                        "    return false;\n" +
+                        "  }\n" +
+                        "}\n" +
+                        "return true;"));
+
+        theClass.addMethod(new JavaMethod("toString", "String", null, "public", null,null,
+                "StringBuffer sb=new StringBuffer();\n" +
+                        "sb.append(\""+entityInfo.getBeanName()+"\");\n" +
+                        "sb.append(\"(\");\n" +
+                        "int max=keySize();\n" +
+                        "for (int i = 0; i < max; i++) {\n" +
+                        "  if(i>0){\n" +
+                        "    sb.append(\",\");\n" +
+                        "  }\n" +
+                        "  sb.append(keyPartAt(i));\n" +
+                        "}\n" +
+                        "sb.append(\")\");\n" +
+                        "return sb.toString();"));
+
+        theClass.addMethod(new JavaMethod(theClass.getName(), null, constParams, "public", null, "Constructor",
+                constructorBody.toString()));
+
+        for (int i = 0; i < constParams.length; i++) {
+            theClass.addMethod(new JavaMethod(JavaUtils.businessGetterName(pkColumns[i]), constParams[i].getType(), null, "public", null, null,
+                    "return " + constParams[i].getName() + ";"));
+        }
+        StringBuilder getPartBuffer = new StringBuilder();
+        if (constParams.length > 1) {
+            getPartBuffer.append("switch(index){\n");
+            for (int i = 0; i < constParams.length; i++) {
+                getPartBuffer.append("  case ").append(i).append(":{\n");
+                getPartBuffer.append("    return ").append(JavaUtils.primitiveToObject(constParams[i].getName(), constParams[i].getType())).append(";\n");
+                getPartBuffer.append("  }\n");
+            }
+            getPartBuffer.append("  default:{\n");
+            getPartBuffer.append("    throw new ArrayIndexOutOfBoundsException(index);\n");
+            getPartBuffer.append("  }\n");
+            getPartBuffer.append("}");
+        } else if (constParams.length == 1) {
+            getPartBuffer.append("return ").append(JavaUtils.primitiveToObject(constParams[0].getName(), constParams[0].getType())).append(";\n");
+        } else {
+            getPartBuffer.append("return null;\n");
+        }
+        theClass.addMethod(new JavaMethod("keyPartAt", "Object", new JavaParam[]{
+                new JavaParam("index", "int", null)
+        }, "public", null, null,
+                getPartBuffer.toString()));
+        theClass.addMethod(new JavaMethod("keySize", "int", null, "public", null, null,
+                "return " + constParams.length + ";"));
+
+        entityInfo.setGeneratedClass("PrimaryKey", theClass);
+//        JBGenUtils.askFileReadOnly(theClass.getFile(destFolder));
+
+        try {
+            if (theClass.rewrite(destFolder,getLog())) {
+                getLog().info(" generating Primary Key Class " + theClass.getPackage() + "." + theClass.getName() + " to " + destFolder.getCanonicalPath() + " ...");
+            }
+            entityInfo.getProjectInfo().addGeneratedFile(theClass.getFile());
+        } catch (FileNotFoundException e) {
+            getLog().error("Readonly file : " + e);
+        }
+    }
+
+    public String toString() {
+        return "Primary Key Generator";
+    }
+
+}

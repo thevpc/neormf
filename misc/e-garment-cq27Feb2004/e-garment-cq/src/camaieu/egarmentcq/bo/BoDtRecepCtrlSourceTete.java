@@ -1,0 +1,295 @@
+package camaieu.egarmentcq.bo;
+
+import camaieu.egarmentcq.common.EGCQBusinessConstants;
+import camaieu.egarmentcq.dataobject.DoArCaracteristicas;
+import camaieu.egarmentcq.dataobject.DoDtRecepCtrlSource;
+import camaieu.egarmentcq.dataobject.DoDtRecepCtrlSourceColis;
+import camaieu.egarmentcq.dataobject.DoDtRecepCtrlSourceTete;
+import camaieu.egarmentcq.dataobject.DoXnFour;
+import wg4.bean.ancestor.BoAncestorBean;
+import wg4.bean.ancestor.MetierException;
+import wg4.bean.ancestor.TechniqueException;
+import wg4.fwk.dataobject.DataObject;
+
+import java.util.Vector;
+
+/**
+ * Business Object pour la manipulation des R�ceptions des cotr�les.
+ *
+ * @author tbensalah (Taha Ben Salah, ADD'IT Tunisie)
+ * @creation_date 15/01/2004
+ * @last_modification_date 15/01/2004
+ * @status pour validation
+ */
+public class BoDtRecepCtrlSourceTete extends BoAncestorBean {
+    /**
+     * mettre � jour les informations relatives � une reception.
+     *
+     * @param element la r�ception � mettre � jour (dans la base)
+     * @throws MetierException
+     */
+    public int update(DoDtRecepCtrlSourceTete element) throws MetierException {
+        return update(new DoDtRecepCtrlSourceTete[]{element});
+    }
+
+    /**
+     * mettre � jour les informations relatives � une reception.
+     *
+     * @param elements la r�ception � mettre � jour (dans la base)
+     * @throws MetierException
+     */
+    public int update(DoDtRecepCtrlSourceTete[] elements) throws MetierException {
+        try {
+            int all = 0;
+            for (int i = 0; i < elements.length; i++) {
+                elements[i].setPersist(DataObject.PERSIST_UPDATE);
+            }
+            all += persist(EGCQBusinessConstants.DATASOURCE_NAME, elements, true);
+            for (int i = 0; i < elements.length; i++) {
+                DoDtRecepCtrlSourceColis[] colis = elements[i].getDtRecepCtrlSourceColis();
+                if (colis != null) {
+                    // mettre � jour les colis
+                    StringBuffer sb = new StringBuffer();
+//                    .append(colis[0].getRscNoColis()
+                    Vector params = new Vector();
+                    params.add(elements[i].getRstCamCatDepCode());
+                    params.add(elements[i].getRstCamCatDepSocCode());
+                    params.add(elements[i].getRstCamNoCmde());
+                    params.add(elements[i].getRstCamCatNoVersion());
+                    params.add(elements[i].getRstNoControle());
+                    if (colis.length == 1) {
+                        sb.append(" AND ").append("RSC_NO_COLIS <> ?");
+                        params.add(colis[0].getRscNoColis());
+                    } else if (colis.length > 1) {
+                        sb.append(" AND ").append("RSC_NO_COLIS NOT IN (");
+                        for (int j = 0; j < colis.length; j++) {
+                            if (j > 0) {
+                                sb.append(", ");
+                            }
+                            sb.append("?");
+                            params.add(colis[j].getRscNoColis());
+                        }
+                        sb.append(")");
+                    }
+
+                    update(
+                            EGCQBusinessConstants.DATASOURCE_NAME,
+                            "UPDATE DT_RECEP_CTRL_SOURCE_COLIS " +
+//                            "Set Z_Status='"+EGCQBusinessConstants.Z_STATUS_DELETED+"' " +
+                            "Set RSC_INDEX='" + EGCQBusinessConstants.INDEX_DELETED + "' " +
+                            "WHERE " +
+                            "RSC_CAT_DEP_CODE = ? " +
+                            "AND RSC_DEP_SOC_CODE = ? " +
+                            "AND RSC_CAT_NO_CMDE = ? " +
+                            "AND RSC_CAT_NO_VERSION = ? " +
+                            "AND RSC_NO_CONTROLE = ? " +
+                            sb.toString()
+                            , new Object[][]{
+                                params.toArray()
+                            }
+                            , true);
+                    if (colis.length > 0) {
+                        for (int j = 0; j < colis.length; j++) {
+                            colis[j].setPersist(DataObject.PERSIST_UPDATE_INSERT);
+                            colis[j].setRscIndex(EGCQBusinessConstants.INDEX_VALID);
+                            colis[j].setRscCatDepCode(elements[i].getRstCamCatDepCode());
+                            colis[j].setRscDepSocCode(elements[i].getRstCamCatDepSocCode());
+                            colis[j].setRscCatNoCmde(elements[i].getRstCamNoCmde());
+                            colis[j].setRscCatNoVersion(elements[i].getRstCamCatNoVersion());
+                            colis[j].setRscNoControle(elements[i].getRstNoControle());
+                        }
+                        all += persist(EGCQBusinessConstants.DATASOURCE_NAME, colis, true);
+                    }
+                }
+                // mise � jour des tests
+                DoDtRecepCtrlSource[] lignes = elements[i].getDtRecepCtrlSources();
+                if (lignes != null && lignes.length > 0) {
+                    for (int j = 0; j < lignes.length; j++) {
+                        lignes[j].setPersist(DataObject.PERSIST_UPDATE);
+                        //superflux
+//                        lignes[j].setRcsCamCatDepSocCode(elements[i].getRstCamCatDepSocCode());
+//                        lignes[j].setRcsCamCatNoCmde(elements[i].getRstCamNoCmde());
+//                        lignes[j].setRcsCamCatNoVersion(elements[i].getRstCamCatNoVersion());
+//                        lignes[j].setRcsCamNoLigne(elements[i].getRstCamNoLigne());
+//                        lignes[j].setRcsCamArtCode(elements[i].getRstCamArtCode());
+//                        lignes[j].setRcsCamArtVar1(elements[i].getRstCamArtVar1());
+//                        lignes[j].setRcsCamArtVar2(elements[i].getRstCamArtVar2());
+//                        lignes[j].setRcsCamArtVar3(elements[i].getRstCamArtVar3());
+//                        lignes[j].setRcsNoControle(elements[i].getRstNoControle());
+//                        lignes[j].setRcsPrestataire(elements[i].getRstPrestataire());
+                    }
+                    all += persist(EGCQBusinessConstants.DATASOURCE_NAME, lignes, true);
+                }
+            }
+            return all;
+        } catch (TechniqueException e) {
+            throw new MetierException(e.getMessage());
+        }
+    }
+
+    /**
+     * charger toutes les informations relative au DoDtRecepCtrlSourceTete
+     * donn� en param�tres
+     *
+     * @param element
+     * @throws MetierException
+     */
+    public DoDtRecepCtrlSourceTete reload(DoDtRecepCtrlSourceTete element) throws MetierException {
+        try {
+            DataObject[][] dataObjects = retrieve(EGCQBusinessConstants.DATASOURCE_NAME,
+                    "SELECT " +
+                    "rst_dt_ctrl_source_reel, rst_dt_ctrl_source_labo, " +
+                    "rst_qte_pres_ctrl_source, rst_qte_prel_ctrl_source, " +
+                    "rst_dt_envoi_echant, rst_echant_scelle_01, " +
+                    "rst_motif_scelle, rst_no_colis_echant, rst_dt_envoi_echant, " +
+
+                    // decision finale
+                    "rst_commentaire, rst_ok_ctrl_source, " +
+                    "rst_prestataire, " +
+
+                    "RST_CAM_CAT_DEP_CODE, " +
+                    "RST_CAM_CAT_DEP_SOC_CODE, " +
+                    "RST_CAM_NO_CMDE, " +
+                    "RST_CAM_CAT_NO_VERSION, " +
+                    "RST_CAM_NO_LIGNE, " +
+                    "RST_CAM_ART_CODE, " +
+                    "RST_CAM_ART_VAR1, " +
+                    "RST_CAM_ART_VAR2, " +
+                    "RST_CAM_ART_VAR3, " +
+                    "RST_NO_CONTROLE " +
+
+                    "FROM " +
+                    "dt_recep_ctrl_source_tete " +
+
+                    "WHERE " +
+
+                    //CODE CLEF
+                    "RST_CAM_CAT_DEP_CODE = ? " +
+                    "AND RST_CAM_CAT_DEP_SOC_CODE = ? " +
+                    "AND RST_CAM_NO_CMDE = ? " +
+                    "AND RST_CAM_CAT_NO_VERSION = ? " +
+                    "AND RST_CAM_NO_LIGNE = ? " +
+                    "AND RST_CAM_ART_CODE = ? " +
+                    "AND RST_CAM_ART_VAR1 = ? " +
+                    "AND RST_CAM_ART_VAR2 = ? " +
+                    "AND RST_CAM_ART_VAR3 = ? " +
+                    "AND RST_NO_CONTROLE = ? "
+                    ,
+                    new Object[]{
+                        element.getRstCamCatDepCode(),
+                        element.getRstCamCatDepSocCode(),
+                        element.getRstCamNoCmde(),
+                        element.getRstCamCatNoVersion(),
+                        element.getRstCamNoLigne(),
+                        element.getRstCamArtCode(),
+                        element.getRstCamArtVar1(),
+                        element.getRstCamArtVar2(),
+                        element.getRstCamArtVar3(),
+                        element.getRstNoControle()
+                    },
+                    new Class[]{DoDtRecepCtrlSourceTete.class}
+            );
+            if (dataObjects.length > 0) {
+                DoDtRecepCtrlSourceTete doDtRecepCtrlSourceTete = (DoDtRecepCtrlSourceTete) dataObjects[0][0];
+
+                // r�cup�ration des tests effectu�s
+                DataObject[][] dataObjectsLignes = retrieve(EGCQBusinessConstants.DATASOURCE_NAME,
+                        "SELECT " +
+                        "RCS_CCC_CODIGO, " +
+                        "RCS_VALEUR_SAISIE, " +
+                        "CCC_DESCRIPCION1, " +
+                        "RCS_CTRL_CRITERE, " +
+                        "RCS_PRESTATAIRE, " +
+                        "RCS_CAM_CAT_DEP_CODE, " +
+                        "RCS_CAM_CAT_DEP_SOC_CODE, " +
+                        "RCS_CAM_CAT_NO_CMDE, " +
+                        "RCS_CAM_CAT_NO_VERSION, " +
+                        "RCS_CAM_NO_LIGNE, " +
+                        "RCS_CAM_ART_CODE, " +
+                        "RCS_CAM_ART_VAR1, " +
+                        "RCS_CAM_ART_VAR2, " +
+                        "RCS_CAM_ART_VAR3, " +
+                        "RCS_NO_CONTROLE, " +
+                        "FOU_NOM " +
+                        "FROM " +
+                        "DT_RECEP_CTRL_SOURCE " +
+                        ",AR_CARACTERISTICAS " +
+                        ",XN_FOUR " +
+                        "WHERE " +
+//                    -- liaison entre DT_RECEP_CTRL_SOURCE et AR_CARACTERISTICAS
+                        "CCC_CODIGO = RCS_CCC_CODIGO AND " +
+                        "RCS_PRESTATAIRE = FOU_CODE (+) AND " +
+                        "RCS_CAM_CAT_DEP_CODE = ? AND " +
+                        "RCS_CAM_CAT_DEP_SOC_CODE = ? AND " +
+                        "RCS_CAM_CAT_NO_CMDE = ? AND " +
+                        "RCS_CAM_CAT_NO_VERSION = ? AND " +
+                        "RCS_CAM_NO_LIGNE = ? AND " +
+                        "RCS_CAM_ART_CODE = ? AND " +
+                        "RCS_CAM_ART_VAR1 = ? AND " +
+                        "RCS_CAM_ART_VAR2 = ? AND " +
+                        "RCS_CAM_ART_VAR3 = ? AND " +
+                        "RCS_NO_CONTROLE = ? "
+                        ,
+                        new Object[]{
+                            element.getRstCamCatDepCode(),
+                            element.getRstCamCatDepSocCode(),
+                            element.getRstCamNoCmde(),
+                            element.getRstCamCatNoVersion(),
+                            element.getRstCamNoLigne(),
+                            element.getRstCamArtCode(),
+                            element.getRstCamArtVar1(),
+                            element.getRstCamArtVar2(),
+                            element.getRstCamArtVar3(),
+                            element.getRstNoControle()
+                        },
+                        new Class[]{DoDtRecepCtrlSource.class, DoArCaracteristicas.class, DoXnFour.class}
+                );
+                DoDtRecepCtrlSource[] s = (DoDtRecepCtrlSource[]) dataObjectsLignes[0];
+                DoArCaracteristicas[] c = (DoArCaracteristicas[]) dataObjectsLignes[1];
+                DoXnFour[] f = (DoXnFour[]) dataObjectsLignes[2];
+                for (int i = 0; i < s.length; i++) {
+                    s[i].setExtraCccDescripcion1(c[i].getCccDescripcion1());
+                    s[i].setExtraRcsPrestataireNom(f[i].getFouNom());
+                }
+                doDtRecepCtrlSourceTete.setDtRecepCtrlSources(s);
+
+                //r�cup�ration des colis
+                dataObjectsLignes = retrieve(EGCQBusinessConstants.DATASOURCE_NAME,
+                        "SELECT " +
+                        "RSC_NO_COLIS, " +
+                        "RSC_CAT_DEP_CODE, " +
+                        "RSC_DEP_SOC_CODE, " +
+                        "RSC_CAT_NO_CMDE, " +
+                        "RSC_CAT_NO_VERSION, " +
+                        "RSC_NO_CONTROLE, " +
+                        "RSC_INDEX " +
+                        "FROM " +
+                        "DT_RECEP_CTRL_SOURCE_COLIS " +
+                        "WHERE " +
+                        "RSC_CAT_DEP_CODE = ? AND " +
+                        "RSC_DEP_SOC_CODE = ? AND " +
+                        "RSC_CAT_NO_CMDE = ? AND " +
+                        "RSC_CAT_NO_VERSION = ? AND " +
+                        "RSC_NO_CONTROLE = ? AND " +
+//                        "RSC_INDEX <> '"+EGCQBusinessConstants.Z_STATUS_DELETED+"'"
+                        "RSC_INDEX <> '" + EGCQBusinessConstants.INDEX_DELETED + "'"
+                        ,
+                        new Object[]{
+                            element.getRstCamCatDepCode(),
+                            element.getRstCamCatDepSocCode(),
+                            element.getRstCamNoCmde(),
+                            element.getRstCamCatNoVersion(),
+                            element.getRstNoControle()
+                        },
+                        new Class[]{DoDtRecepCtrlSourceColis.class}
+                );
+                doDtRecepCtrlSourceTete.setDtRecepCtrlSourceColis((DoDtRecepCtrlSourceColis[]) dataObjectsLignes[0]);
+                return doDtRecepCtrlSourceTete;
+            }
+            return null;
+        } catch (TechniqueException e) {
+            throw new MetierException(e.getMessage());
+        }
+    }
+
+}

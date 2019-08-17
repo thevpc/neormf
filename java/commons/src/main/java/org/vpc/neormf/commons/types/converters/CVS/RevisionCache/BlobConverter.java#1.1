@@ -1,0 +1,55 @@
+/*
+ * CopyrightPlugin (c) 2004 Your Corporation. All Rights Reserved.
+ */
+package org.vpc.neormf.commons.types.converters;
+
+import org.vpc.neormf.commons.types.DataType;
+
+import org.vpc.neormf.commons.beans.BlobData;
+import org.vpc.neormf.commons.types.AnyType;
+import org.vpc.neormf.commons.types.BlobType;
+import org.vpc.neormf.commons.util.SerializationUtils;
+
+/**
+ * class presentation
+ *
+ * @author taha BEN SALAH (tbensalah)
+ * @version 1.0
+ * @copyrights (c) 2004, Vpc Open Source Foundary
+ * @project New Entreprise Object Relational Mapping Framework (neormf)
+ * @creation on Date: 2 avr. 2004 Time: 14:41:43
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ */
+public class BlobConverter extends DataTypeConverter {
+
+    private BlobType sql;
+    private AnyType type;
+
+    public BlobConverter(Class objectType) {
+        this(objectType,true);
+    }
+    
+    public BlobConverter(Class objectType,boolean nullable) {
+        sql=new BlobType(nullable);
+        type=new AnyType(objectType, nullable);
+    }
+
+    public DataType getSQLDataType() {
+        return sql;
+    }
+
+    public DataType getBusinessDataType(DataType baseType) {
+        return type;
+    }
+
+    public Object businessToSQL(Object businessObject) {
+        byte[] bb=SerializationUtils.getSerializedFormOf(businessObject);
+        return bb==null? null : new BlobData(bb);
+    }
+
+    public Object sqlToBusiness(Object sqlObject) {
+        return SerializationUtils.getSerializedFormOf(sqlObject==null?null:((BlobData)sqlObject).getBytes());
+    }
+}

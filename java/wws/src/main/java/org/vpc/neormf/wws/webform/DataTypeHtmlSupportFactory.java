@@ -1,0 +1,123 @@
+package org.vpc.neormf.wws.webform;
+
+import org.vpc.neormf.commons.beans.DataField;
+import org.vpc.neormf.commons.types.*;
+import org.vpc.neormf.wws.common.WUtils;
+import org.vpc.neormf.wws.webform.datatype.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Hashtable;
+import java.util.NoSuchElementException;
+import org.vpc.neormf.commons.beans.DataTransfertObject;
+import org.vpc.neormf.commons.beans.ModuleInfo;
+import org.vpc.neormf.commons.beans.RelationInfo;
+import org.vpc.neormf.commons.beans.RelationRoleIndex;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: vpc
+ * Date: 5 août 2005
+ * Time: 18:14:23
+ * To change this template use File | Settings | File Templates.
+ */
+public final class DataTypeHtmlSupportFactory {
+
+    private static Hashtable datatypeClassMapping = new Hashtable();
+    
+
+    static {
+        installSupport(BooleanType.class, new BooleanTypeHtmlSupport());
+        installSupport(StringType.class, new StringTypeHtmlSupport());
+        installSupport(IntType.class, new IntTypeHtmlSupport());
+        installSupport(DoubleType.class, new DoubleTypeHtmlSupport());
+        installSupport(DateType.class, new DateTypeHtmlSupport());
+        installSupport(DayMonthType.class, new DayMonthTypeHtmlSupport());
+        installSupport(DateTimeType.class, new DateTimeTypeHtmlSupport());
+        installSupport(TimeType.class, new TimeTypeHtmlSupport());
+        installSupport(AbstractChoiceType.class, new ChoiceTypeHtmlSupport());
+        installSupport(ListChoiceType.class, new ChoiceTypeHtmlSupport());
+        installSupport(TimeDayType.class, new TimeDayTypeHtmlSupport());
+        installSupport(BlobType.class, new FileTypeHtmlSupport());
+    }
+
+    public static void installSupport(Class dataTypeClass, DataTypeHtmlSupport support) {
+        datatypeClassMapping.put(dataTypeClass, support);
+    }
+
+    public static DataTypeHtmlSupport getSupport(DataField field, HttpServletRequest request) {
+        DataTypeHtmlSupport s = null;
+        if (request != null) {
+            s = (DataTypeHtmlSupport) WUtils.getObject(request, getSupportPropertyName(field), null);
+        }
+        if (s == null) {
+            s = (DataTypeHtmlSupport) field.getClientProperty(DataTypeHtmlSupportFactory.class.getName());
+        }
+        if (s == null) {
+            s = getSupport(field.getFieldType().getClass());
+        }
+        return s;
+    }
+
+    public static String getSupportPropertyName(DataField field) {
+        return "field." + field.getFieldName() + "$" + DataTypeHtmlSupportFactory.class.getName();
+    }
+
+    public static DataTypeHtmlSupport getSupport(DataType type) {
+        return getSupport(type.getClass());
+    }
+
+    public static DataTypeHtmlSupport getSupport(Class dataTypeClass) {
+        DataTypeHtmlSupport s = (DataTypeHtmlSupport) datatypeClassMapping.get(dataTypeClass);
+        if (s == null) {
+            throw new NoSuchElementException("No DataTypeHtmlSupport found for " + dataTypeClass);
+        }
+        return s;
+    }
+
+    public static void installSupport(DataField field, DataTypeHtmlSupport support) {
+        System.out.println("installSupport(" + field.getDataInfo().getBeanName() + "." + field.getFieldName() + ") = " + support);
+        field.setClientProperty(DataTypeHtmlSupportFactory.class.getName(), support);
+    }
+
+    public static void installSupportForRequest(DataField field, DataTypeHtmlSupport support, HttpServletRequest request) {
+        request.setAttribute(getSupportPropertyName(field), support);
+    }
+
+    public static void installRelation(DataTransfertObject detail, String detailFieldName, DataTransfertObject master, boolean nullable) {
+        installSupport(detail.info().getField(detailFieldName), new ChoiceTypeHtmlSupport(new DTOChoiceTypeForBD(nullable, master)));
+    }
+
+    public static void installRelation(DataTransfertObject detail, String detailFieldName, DataTransfertObject master) {
+        installSupport(detail.info().getField(detailFieldName), new ChoiceTypeHtmlSupport(new DTOChoiceTypeForBD(detail.info().getField(detailFieldName).getFieldType().isNullable(), master)));
+    }
+
+    public static void installModule(ModuleInfo module) {
+        for (RelationInfo elem : module.getRelationsList()) {
+            try {
+                DataTypeHtmlSupportFactory.installRelation(elem);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void installRelation(RelationInfo relation) {
+        if (relation.getForeignRole().getItems().size() != 1) {
+            return;
+        }
+        RelationRoleIndex relationRoleIndex = relation.getForeignRole().getItems().get(0);
+        try {
+            installSupport(relationRoleIndex.getField(), new ChoiceTypeHtmlSupport(new DTOChoiceTypeForBD(relationRoleIndex.getField().getFieldType().isNullable(), (DataTransfertObject) Class.forName(relation.getPrimaryDTOName()).newInstance())));
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void installRelationForRequest(DataTransfertObject detail, String detailFieldName, DataTransfertObject master, boolean nullable, HttpServletRequest request) {
+        installSupportForRequest(detail.info().getField(detailFieldName), new ChoiceTypeHtmlSupport(new DTOChoiceTypeForBD(nullable, master)), request);
+    }
+
+    public static void installRelationForRequest(DataTransfertObject detail, String detailFieldName, DataTransfertObject master, HttpServletRequest request) {
+        installSupportForRequest(detail.info().getField(detailFieldName), new ChoiceTypeHtmlSupport(new DTOChoiceTypeForBD(detail.info().getField(detailFieldName).getFieldType().isNullable(), master)), request);
+    }
+}

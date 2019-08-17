@@ -1,0 +1,12 @@
+On trouvera dans ce répertoire les fichiers sources (.java et .jsp)
+Les fichiers à valider sont ceux dans lesquels il sera noté 
+explicitement "@status pour validation"
+
+D'autres sources sont donnés à titre d'information sur l'avancement 
+du projet. certains sont générés automatiquement, il ne cotiendronts 
+donc pas de commentaires dans le reste il sera spécifié que le fichier 
+est encore en chantier "@status en chantier
+
+Taha Ben Salah
+	
+

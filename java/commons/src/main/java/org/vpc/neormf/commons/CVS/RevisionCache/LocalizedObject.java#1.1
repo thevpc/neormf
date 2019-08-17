@@ -1,0 +1,14 @@
+package org.vpc.neormf.commons;
+
+import java.util.Locale;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: taha
+ * Date: 14 dec. 2005
+ * Time: 11:02:55
+ * To change this template use File | Settings | File Templates.
+ */
+public interface LocalizedObject {
+    public void setLocale(Locale locale);
+}

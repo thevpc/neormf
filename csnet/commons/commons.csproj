@@ -1,0 +1,136 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{AFE62467-BCAF-4EC6-B45C-E05FD68593CB}</ProjectGuid>
+    <RootNamespace>commons</RootNamespace>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputType>Library</OutputType>
+    <AssemblyName>neormf-commons</AssemblyName>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>commons</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputType>Library</OutputType>
+    <AssemblyName>neormf-commons</AssemblyName>
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>false</DebugSymbols>
+    <RootNamespace>commons</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DefineConstants>
+    </DefineConstants>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="src\com\microsoft\SqlHelper.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\CommunicationException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\LocalizedObject.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\Criteria.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\DataContent.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\DataField.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\DataInfo.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\DataKey.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\DynamicDataContent.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\FieldFormula.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\FieldQuery.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\ModuleInfo.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\NamedDataContent.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\OrderList.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\PropertyList.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\ViewDataContent.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\AbstractNeormfRuntimeException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\BadFormatException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\BugException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\CorruptedDatabaseException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\CreateDataException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\DataNotFoundException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\DataRetrievalException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\DirtyUpdateException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\FieldException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\ForbiddenFieldOnInsertException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\ForbiddenFieldOnSearchException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\ForbiddenFieldOnUpdateException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\IllegalUpdateKeyException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\RemoveDataException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\RequiredFieldOnInsertException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\RequiredFieldOnUpdateException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\UnknownFieldException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\exceptions\UpdateDataException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\Locale.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\MissingMessageException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\MissingResourceException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\PreparedStatement.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\ResourceBundle.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\ResultSet.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\ResultSetForDataReader.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\ResultSetForDataSet.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\SimpleDateFormat.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\Types.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\jwrapper\XmlFileResourceBundle.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\sql\DBConnector.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\sql\DriverNotFoundException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\sql\NoSuchElementException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\sql\SqlParam.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\sql\SqlStatementParamsProvider.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\sql\SqlString.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\sql\SQLUtils.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\AbstractChoiceType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\AnyType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\BooleanType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\DataContentChoiceType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\DataException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\DataType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\DateTimeType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\DateType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\DayMonthType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\DoubleType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\IntType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\ListChoiceType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\StringType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\TimeDayType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\TimeType.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\converters\DataTypeConverter.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\converters\IntegerToBoolean.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\types\converters\String1ToBoolean.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\BadDataException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\BadLoginPwdException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\BusinessException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\ConnectionInfo.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\Dumpable.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\HandledException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\IOUtils.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\JdbcAppender.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\Maps.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\NeormfMessages.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\RequiredPrivilegesException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\Struct.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\UnsupportedOperationException.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\Utils.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\util\XmlUtils.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\RelationInfo.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\RelationRoleInfo.cs" />
+    <Compile Include="src\org\vpc\neormf\commons\beans\RelationRoleIndex.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\org\vpc\neormf\commons\util\neormf-messages.properties" />
+    <None Include="src\org\vpc\neormf\commons\util\neormf-messages_fr.properties" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+</Project>

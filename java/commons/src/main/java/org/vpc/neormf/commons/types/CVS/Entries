@@ -1,0 +1,18 @@
+D/converters////
+/BooleanType.java/1.1/Thu Feb 02 20:45:34 2006//
+/TimeDayType.java/1.1/Thu Feb 02 20:45:34 2006//
+/AnyType.java/1.1/Wed Apr 09 15:10:43 2008//
+/DoubleType.java/1.1/Thu Feb 02 20:45:34 2006//
+/TimeType.java/1.1/Thu Feb 02 20:45:34 2006//
+/IntType.java/1.1/Thu Feb 02 20:45:34 2006//
+/DateTimeType.java/1.1/Thu Feb 02 20:45:34 2006//
+/DayMonthType.java/1.1/Thu Feb 02 20:45:34 2006//
+/StringType.java/1.1/Thu Feb 02 20:45:34 2006//
+/DateType.java/1.1/Thu Feb 02 20:45:34 2006//
+/ListChoiceType.java/1.1/Wed Dec 13 11:59:46 2006//
+/DataType.java/1.1/Thu Feb 02 20:45:44 2006//
+/AbstractDTOChoiceType.java/1.1/Sun Feb 10 21:20:19 2008//
+/AbstractChoiceType.java/1.1/Thu Feb 02 20:45:34 2006//
+/BlobType.java/1.1/Wed Apr 09 18:14:15 2008//
+/DTOChoiceTypeForBD.java/1.1/Sun Feb 10 21:50:52 2008//
+/DataException.java/1.1/Wed Dec 14 10:55:10 2005//

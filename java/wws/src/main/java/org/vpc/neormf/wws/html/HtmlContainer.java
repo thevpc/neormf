@@ -1,0 +1,37 @@
+package org.vpc.neormf.wws.html;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: ramzi
+ * Date: 18 nov. 2005
+ * Time: 17:35:45
+ * To change this template use File | Settings | File Templates.
+ */
+public class HtmlContainer extends HtmlWidget{
+    ArrayList elements=new ArrayList();
+
+//    public HtmlContainer() {
+//    }
+    
+    public HtmlContainer(HtmlWidget ... widgets) {
+        for (HtmlWidget w : widgets) {
+            addElement(w);
+        }
+    }
+
+    public void addElement(HtmlWidget w){
+        elements.add(w);
+    }
+
+    public String toHtml() {
+        StringBuffer sb=new StringBuffer();
+        for (Iterator i = elements.iterator(); i.hasNext();) {
+            HtmlWidget htmlWidget = (HtmlWidget) i.next();
+            sb.append(htmlWidget.toHtml());
+        }
+        return sb.toString();
+    }
+}

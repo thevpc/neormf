@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+    <servlet>
+        <servlet-name>logInit</servlet-name>
+        <servlet-class>wg4.fwk.log.LogInitServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Standard Action Servlet Configuration (with debugging) -->
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>3</param-value>
+        </init-param>
+        <init-param>
+            <param-name>detail</param-name>
+            <param-value>3</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+
+
+    <!-- Standard Action Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- The Usual Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>startup_redirect.jsp</welcome-file>
+    </welcome-file-list>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/standard_error.jsp</location>
+    </error-page>
+
+    <!-- Struts Tag Library Descriptors
+    <taglib>
+      <taglib-uri>/tags/struts-bean</taglib-uri>
+      <taglib-location>/WEB-INF/struts-bean.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+      <taglib-uri>/tags/struts-html</taglib-uri>
+      <taglib-location>/WEB-INF/struts-html.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+      <taglib-uri>/tags/struts-logic</taglib-uri>
+      <taglib-location>/WEB-INF/struts-logic.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+      <taglib-uri>/tags/struts-nested</taglib-uri>
+      <taglib-location>/WEB-INF/struts-nested.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+      <taglib-uri>/tags/struts-tiles</taglib-uri>
+      <taglib-location>/WEB-INF/struts-tiles.tld</taglib-location>
+    </taglib>
+
+  -->
+    <taglib>
+        <taglib-uri>droit.tld</taglib-uri>
+        <taglib-location>/WEB-INF/droit.tld</taglib-location>
+    </taglib>
+
+
+    <security-constraint>
+        <display-name>contraintes de securite</display-name>
+        <web-resource-collection>
+            <web-resource-name>Restriction appli</web-resource-name>
+            <!--         <url-pattern>/*</url-pattern>-->
+
+            <url-pattern>*.jsp</url-pattern>
+            <url-pattern>*.do</url-pattern>
+            <http-method>DELETE</http-method>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+            <http-method>PUT</http-method>
+        </web-resource-collection>
+<!--        <auth-constraint>-->
+<!--            <role-name>admin#e-garment-cq</role-name>-->
+<!--            <role-name>user#e-garment-cq</role-name>-->
+<!--        </auth-constraint>-->
+              <auth-constraint>
+                 <role-name>none</role-name>
+              </auth-constraint>
+    </security-constraint>
+
+    <!--    <login-config>-->
+    <!--      <auth-method>BASIC</auth-method>-->
+    <!--      <realm-name>Cette application est protégée par Mot de passe. Veuillez vous identifier.</realm-name>-->
+    <!--    </login-config>-->
+    <!--    <security-role>-->
+    <!--    	<role-name>none</role-name>-->
+    <!--    </security-role>-->
+
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>Extranet Bureau</realm-name>
+        <form-login-config>
+            <form-login-page>/login.jsp</form-login-page>
+            <form-error-page>/standard_error.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
+
+    <env-entry>
+        <description>upload temporaire</description>
+        <env-entry-name>uploadTempRoot</env-entry-name>
+        <env-entry-value>c:\temp\</env-entry-value>
+        <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <description>upload final</description>
+        <env-entry-name>uploadWebRoot</env-entry-name>
+        <env-entry-value>upload</env-entry-value>
+        <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <description>comma separated uploadable files</description>
+        <env-entry-name>uploadFileTypes</env-entry-name>
+        <env-entry-value>doc,pdf,jpg,gif,tif,zip,txt</env-entry-value>
+        <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <description>max size (in ko) of uploadable files</description>
+        <env-entry-name>uploadFileMaxSize</env-entry-name>
+        <!--       <env-entry-value>700</env-entry-value>-->
+        <env-entry-value>300</env-entry-value>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+    </env-entry>
+
+    <env-entry>
+        <description>max count of uploaded files</description>
+        <env-entry-name>uploadFileMaxCount</env-entry-name>
+        <env-entry-value>3</env-entry-value>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+    </env-entry>
+
+    <!--    <env-entry>-->
+    <!--       <description>upload final</description>-->
+    <!--       <env-entry-name>uploadRoot</env-entry-name>-->
+    <!--       <env-entry-value>c:\upload\</env-entry-value>-->
+    <!--       <env-entry-type>java.lang.String</env-entry-type>-->
+    <!--    </env-entry>-->
+
+</web-app>
+

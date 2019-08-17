@@ -1,0 +1,8 @@
+DT_CMDE_ACHAT_TETE
+    cat_dep_code
+    cat_dep_soc_code
+    cat_no_cmde
+    cat_no_version
+
+
+    * vérifier la localisation

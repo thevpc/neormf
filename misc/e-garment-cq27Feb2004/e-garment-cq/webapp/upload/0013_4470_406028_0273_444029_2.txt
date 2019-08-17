@@ -1,0 +1,45 @@
+livraison 1 
+-------------------------
+page identification : prévu 0.5, (testée, ok)
+choix prestatire : prévu 1.5, (testée, ok)
+page de menu : prévu 1, (testée, ok)
+
+livraison 2 
+-----------------------
+planning de controle : prévu 1.5, 
+	(
+	testée avec une base vide des donnée statique.
+	Je dois attendre lundi pour voir avec Julier la base
+	J'ai revu la requête incorrecte et il me semble que je l'ai corrigée
+	Je dois valider avec Julien lundi si c bon elle le module est ok.
+	Il faudra alors juste que j'enlève le code statique de test.
+	)
+
+livraison 3 
+-----------------------
+planning de controle : prévu 1.5, (testée, ok)
+rapport d'inspection : prévu 1.5, (dev 100%, testée 80%, ok) je vais passer 2 h demain 
+	pour tesminer les test car c'est le formulaire  le plus déliciat
+
+livraison 4 
+-----------------------
+rapport d'inspection : (dev 100%, testée 80%, ok) reste un champ manquant dans la base 
+et les clefs primaire. Quand ce sera fait je réactive juste le code qu est désactivé
+Accusées de receptions prévu 1.5 (testée, ok)
+Correction des bugs remontés par Julien au cours de la livraison camaieu N°1
+
+livraison 5 
+-----------------------
+rapport d'inspection : (dev 100%, testée 80%, ok) reste un champ manquant dans la base 
+et les clefs primaire. Quand ce sera fait je réactive juste le code qu est désactivé
+génération des ordres de fabrication : prévu 1.5 (testée, ok)
+génération des étiquettes : prévu 1.5 (testée dans une base vide avec des valeurs par défaut, ok) 
+
+livraison 6 
+-----------------------
+livraison finale
+
+Taha Ben Salah
+	Lille le 27/01/2004
+
+

@@ -1,0 +1,320 @@
+package org.vpc.neormf.commons.beans;
+
+import org.vpc.neormf.commons.util.Dumpable;
+import org.vpc.neormf.commons.util.Utils;
+
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.*;
+
+/**
+ * class presentation
+ *
+ * @author taha BEN SALAH (tbensalah)
+ * @version 1.0
+ * @copyrights (c) 2004, Vpc Open Source Foundary
+ * @project New Entreprise Object Relational Mapping Framework (neormf)
+ * @creation on Date: 23 mars 2004 Time: 19:22:08
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ */
+public class DataTransfertObject implements Serializable, Dumpable {
+
+
+    private HashMap dataMap;
+    private transient String nullDataNameString;
+    private transient String dtoTitleProperty;
+    private transient boolean dtoValidatable = true;
+    static final long serialVersionUID = 7935690066993063725L;
+
+//    public static void main(String[] args) {
+//        DataTransfertObject d1 = new DataTransfertObject();
+//        d1.setProperty("t", null);
+//        d1.setProperty("t2", "mmd");
+//
+//        DataTransfertObject d2 = new DataTransfertObject();
+////        d2.setProperty("t",null);
+//        d2.setProperty("t2", "mmd");
+//        d2.setProperty("t3", "mmd");
+//        System.out.println(d1.equals(d2));
+//    }
+
+    public DataTransfertObject() {
+        this.dataMap = new HashMap();
+    }
+
+    public Object getProperty(String fieldName) {
+        return this.dataMap.get(fieldName);
+    }
+
+    public void setProperty(String fieldName, Object value) {
+        if (dtoValidatable) {
+            DTOMetaData info = metadata();
+            if (info != null) {
+                DTOFieldMetaData dataField = info.getField(fieldName);
+                if (dataField != null) {
+                    dataField.getFieldType().validateValue(value, dataField.getFieldTitle());
+                }
+            }
+        }
+        this.dataMap.put(fieldName, value);
+    }
+
+    public Set keySet() {
+        return this.dataMap.keySet();
+    }
+
+    public Set entrySet() {
+        return this.dataMap.entrySet();
+    }
+
+    public boolean containsProperty(String fieldName) {
+        return this.dataMap.containsKey(fieldName);
+    }
+
+    public void unsetProperty(String fieldName) {
+        this.dataMap.remove(fieldName);
+    }
+
+    public DTOMetaData metadata() {
+//        throw new UnsupportedOperationException();
+        return null;
+    }
+
+    public String name() {
+        String pn = dtoTitleProperty;
+        DTOMetaData info = metadata();
+        if (pn == null) {
+            pn = info.getTitleField().getFieldName();
+        }
+        Object o = getProperty(pn);
+        if (o == null) {
+            String nns = getDTOTNullTitle();
+            if (nns == null) {
+                nns = "<UNKNOWN " + info.getBeanName() + ">";
+            }
+            return nns;
+        }
+        return String.valueOf(o);
+    }
+
+    @Override
+    public String toString() {
+        return name();
+    }
+
+    /**
+     * string used to replace NULL title field values
+     * Default is <pre>"<UNKNOWN " + info.getBeanName() + ">"</pre>
+     * @return string used to replace NULL title field values
+     */
+    public String getDTOTNullTitle() {
+        return nullDataNameString;
+    }
+
+    /**
+     * string used to replace NULL title field values
+     * Default is <pre>"<UNKNOWN " + info.getBeanName() + ">"</pre>
+     * 
+     * @param nullDataNameString new value for NULL title field values
+     */
+    public void setDTOTNullTitle(String nullDataNameString) {
+        this.nullDataNameString = nullDataNameString;
+    }
+
+    /**
+     * Title property name
+     * @return Title property name
+     */
+    public String getDTOTitleProperty() {
+        return dtoTitleProperty;
+    }
+
+    /**
+     * Title property name
+     * @param dataNamePropertyName new value for Title property name
+     */
+    public void setDTOTitleProperty(String dataNamePropertyName) {
+        this.dtoTitleProperty = dataNamePropertyName;
+    }
+
+    public DataKey getDataKey() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void removeDataKey() {
+        DTOMetaData info = metadata();
+        DTOFieldMetaData[] fields = info.getKeyFields();
+        for (int i = 0; i < fields.length; i++) {
+            dataMap.remove(fields[i].getFieldName());
+        }
+    }
+
+    public int size() {
+        return dataMap.size();
+    }
+
+    public static void setDTOTitleProperty(String dataNamePropertyName, Collection dtoCollection) {
+        for (Iterator i = dtoCollection.iterator(); i.hasNext();) {
+            DataTransfertObject dataTransfertObject = (DataTransfertObject) i.next();
+            dataTransfertObject.setDTOTitleProperty(dataNamePropertyName);
+        }
+    }
+
+    public boolean isDTOValidatable() {
+        return dtoValidatable;
+    }
+
+    public void setDTOValidatable(boolean dataContentValidatable) {
+        this.dtoValidatable = dataContentValidatable;
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            DataTransfertObject dc = (DataTransfertObject) super.clone();
+            dc.dataMap = new HashMap(this.dataMap);
+            return dc;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public DataKey[] getAllKeys(DataTransfertObject[] values) {
+        DTOMetaData dataInfo = metadata();
+        DataKey[] keys = null;
+        if (dataInfo == null) {
+            keys = new DataKey[values.length];
+        } else {
+            keys = (DataKey[]) Array.newInstance(dataInfo.getDataKeyClass(), values.length);
+        }
+        for (int i = 0; i < keys.length; i++) {
+            keys[i] = values[i].getDataKey();
+        }
+        return keys;
+    }
+
+//    public String dump(){
+//        return dump(false);
+//    }
+
+    public String dump() {
+        String c = getClass().getName();
+        int x = c.lastIndexOf('.');
+        StringBuffer sb = new StringBuffer();
+        if (x > 0) {
+            sb.append(c.substring(x + 1));
+
+        } else {
+            sb.append(c);
+        }
+
+
+        sb.append("[");
+        boolean first = true;
+        for (Iterator i = dataMap.entrySet().iterator(); i.hasNext();) {
+            Map.Entry e = (Map.Entry) i.next();
+            if (first) {
+                first = false;
+            } else {
+                sb.append(",");
+            }
+            sb.append(e.getKey());
+            sb.append("=");
+            sb.append(Utils.dump(e.getValue()));
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    public void addAllDeclaredProperties(DataTransfertObject other) {
+        if (other == null) {
+
+        }
+        DTOMetaData info = metadata();
+        DTOFieldMetaData[] fields = info.getFields();
+        for (int i = 0; i < fields.length; i++) {
+            String n = fields[i].getFieldName();
+            if (other.containsProperty(n)) {
+                setProperty(n, other.getProperty(n));
+            }
+        }
+    }
+
+//    @Override
+//    public int hashCode() {
+//        int hashCode = 0;
+//        for (Iterator i = dataMap.entrySet().iterator(); i.hasNext();) {
+//            Map.Entry entry = (Map.Entry) i.next();
+//            Object k = entry.getKey();
+//            Object v = entry.getValue();
+//            hashCode += (k == null ? 0 : k.hashCode());
+//            hashCode *= ((v == null ? 0 : v.hashCode()));
+//        }
+//        return hashCode;
+//    }
+//
+//
+//    @Override
+//    public boolean equals(Object o) {
+//        if (getClass().isInstance(o)) {
+//            int s = dataMap.size();
+//            DataTransfertObject d = (DataTransfertObject) o;
+//            if (d.size() != s) {
+//                return false;
+//            }
+//            for (Iterator i = dataMap.entrySet().iterator(); i.hasNext();) {
+//                Map.Entry entry = (Map.Entry) i.next();
+//                String k = (String) entry.getKey();
+//                Object v = entry.getValue();
+//                Object v2 = d.dataMap.get(k);
+//                if (v2 != null) {
+//                    // field exists in Other
+//                    if (!v2.equals(v)) {
+//                        return false;
+//                    }
+//                } else {
+//                    if (v == null) {
+//                        // either field does not exist or is null
+//                        if (!d.dataMap.containsKey(k)) {
+//                            // field doest not exist
+//                            return false;
+//                        }
+//                    } else {
+//                        // v2 is null but v is not
+//                        return false;
+//                    }
+//                }
+//            }
+//            return true;
+//        }
+//        return false;
+//    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DataTransfertObject that = (DataTransfertObject) o;
+
+        if (dtoValidatable != that.dtoValidatable) return false;
+        if (dataMap != null ? !dataMap.equals(that.dataMap) : that.dataMap != null) return false;
+        if (dtoTitleProperty != null ? !dtoTitleProperty.equals(that.dtoTitleProperty) : that.dtoTitleProperty != null)
+            return false;
+        if (nullDataNameString != null ? !nullDataNameString.equals(that.nullDataNameString) : that.nullDataNameString != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = dataMap != null ? dataMap.hashCode() : 0;
+        result = 31 * result + (nullDataNameString != null ? nullDataNameString.hashCode() : 0);
+        result = 31 * result + (dtoTitleProperty != null ? dtoTitleProperty.hashCode() : 0);
+        result = 31 * result + (dtoValidatable ? 1 : 0);
+        return result;
+    }
+}

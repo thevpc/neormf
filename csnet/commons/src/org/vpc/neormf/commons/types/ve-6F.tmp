@@ -1,0 +1,90 @@
+package org.vpc.neormf.commons.types;
+
+import java.util.List;
+import java.util.Arrays;
+import java.util.Iterator;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: vpc
+ * Date: 12 août 2005
+ * Time: 14:55:47
+ * To change this template use File | Settings | File Templates.
+ */
+public class ListChoiceType extends AbstractChoiceType {
+    private List elements;
+    public ListChoiceType(boolean nullable, Object[] elements, DataType elementType) {
+        this(nullable, Arrays.asList(elements), elementType);
+    }
+
+    public ListChoiceType(boolean nullable, List elements, DataType elementType) {
+        super(nullable,elementType);
+        this.elements = elements;
+    }
+
+    public Object validateValue(Object object, String fieldName) throws DataException {
+        object = super.validateValue(object, fieldName);
+        if (object != null) {
+            if (!elements.contains(object)) {
+                object = null;
+            }
+        }
+        return object;
+    }
+
+    public String toCode() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("new ").append(getClass().getName()).append("(").append(isNullable());
+        sb.append(",java.util.Arrays.asList(new Object[]{");
+        boolean first = true;
+        for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append(",");
+            }
+            Object o = iterator.next();
+            if (o == null) {
+                sb.append("null");
+            } else if (o instanceof String) {
+                sb.append("\"");
+                sb.append(o);
+                sb.append("\"");
+            } else if (o instanceof java.util.Date) {
+                sb.append("new java.util.Date(");
+                sb.append(((java.util.Date) o).getTime()).append("L");
+                sb.append(")");
+            } else if (o instanceof Integer) {
+                sb.append("new Integer(");
+                sb.append(o);
+                sb.append(")");
+            } else if (o instanceof Long) {
+                sb.append("new Long(");
+                sb.append(o).append("L");
+                sb.append(")");
+            } else if (o instanceof Double) {
+                sb.append("new Double(");
+                sb.append(o);
+                sb.append(")");
+            } else if (o instanceof Float) {
+                sb.append("new Float(");
+                sb.append(o).append("F");
+                sb.append(")");
+            } else {
+                throw new IllegalArgumentException("Unknown Type " + o.getClass());
+            }
+        }
+        sb.append("}),");
+        sb.append(getElementType().toCode());
+        sb.append(")");
+        return sb.toString();
+    }
+
+    public String getKeyRenderer(Object value) {
+        return null;
+    }
+
+    public List elements() {
+        return elements;
+    }
+}

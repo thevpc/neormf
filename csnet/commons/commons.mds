@@ -1,0 +1,16 @@
+<Combine name="commons" fileversion="2.0">
+  <Configurations active="Debug|Any CPU">
+    <Configuration name="Debug|Any CPU" ctype="CombineConfiguration">
+      <Entry build="True" name="commons" configuration="Debug|Any CPU" />
+    </Configuration>
+    <Configuration name="Release|Any CPU" ctype="CombineConfiguration">
+      <Entry build="True" name="commons" configuration="Release|Any CPU" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="commons" single="True">
+    <Execute type="None" entry="commons" />
+  </StartMode>
+  <Entries>
+    <Entry filename="commons.csproj" />
+  </Entries>
+</Combine>

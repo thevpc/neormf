@@ -1,0 +1,155 @@
+<Configuration>
+  <RecentFilesTracker>
+    <RecentFilesTracker>
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wws\AssemblyInfo.cs" offset="945" line="29" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wws\src\org\vpc\neormf\wws\UIDTO.cs" offset="0" line="138" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wws\src\org\vpc\neormf\wws\UIDTOField.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\AssemblyInfo.cs" offset="954" line="23" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\types\ListChoiceType.cs" offset="1716" line="19" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\types\AbstractChoiceType.cs" offset="1264" line="51" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\util\ModuleLog.cs" offset="78" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\WFSApplication.cs" offset="0" line="94" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\AssemblyInfo.cs" offset="945" line="17" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\SecurityBO.cs" offset="689" line="76" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\RequiredPrivilegesException.cs" offset="247" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\WFSBusinessObject.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\UIDTO.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\neormf-messages_fr.properties" offset="0" line="-1" column="-1" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\neormf-messages.properties" offset="0" line="-1" column="-1" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\HandledException.cs" offset="0" line="-1" column="-1" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\Dumpable.cs" offset="0" line="-1" column="-1" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\ConnectionInfo.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\BadLoginPwdException.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\BadDataException.cs" offset="0" line="20" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\NeormfMessages.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\UnsupportedOperationException.cs" offset="0" line="-1" column="-1" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\BusinessException.cs" offset="0" line="1" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\util\WFSConfig.cs" offset="0" line="71" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\util\Utils.cs" offset="0" line="17" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\commons\src\org\vpc\neormf\commons\beans\ModuleInfo.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\components\ProgressDialog.cs" offset="0" line="0" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\util\WFSUtils.cs" offset="382" line="10" column="0" />
+      <TrackedFile location="D:\xprojects\neormf\csnet\neormf\wfs\src\org\vpc\neormf\wfs\components\ProgressEvent.cs" offset="0" line="0" column="0" />
+    </RecentFilesTracker>
+  </RecentFilesTracker>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean />
+  </SettingsComponent>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Qualified:@org.vpc.neormf.commons.jwrapper.ResourceBundle.cached">
+      <Item value="ContainsKey" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Xml.XmlNode">
+      <Item value="Attributes" priority="0" />
+      <Item value="Name" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.DateTime">
+      <Item value="Ticks" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Reflection.FieldInfo">
+      <Item value="FieldType" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@org.vpc.neormf.commons.jwrapper.ResourceBundle">
+      <Item value="GetBundle" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Xml.XmlAttributeCollection">
+      <Item value="Append" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Collections.Hashtable">
+      <Item value="ContainsKey" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:string">
+      <Item value="EndsWith" priority="0" />
+      <Item value="LastIndexOf" priority="0" />
+      <Item value="Length" priority="0" />
+      <Item value="Substring" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.AttributeTargets">
+      <Item value="Field" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Web.UI.Page">
+      <Item value="GetType" priority="0" />
+      <Item value="Request" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.SqlClient.SqlCommand">
+      <Item value="CommandText" priority="0" />
+      <Item value="CommandType" priority="0" />
+      <Item value="ExecuteNonQuery" priority="0" />
+      <Item value="Connection" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@org.vpc.neormf.commons.jwrapper.Locale">
+      <Item value="Current" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Data.SqlClient.SqlDataReader">
+      <Item value="Close" priority="0" />
+      <Item value="NextResult" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Convert">
+      <Item value="ToBase64String" priority="0" />
+      <Item value="ToString" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Web.HttpRequest">
+      <Item value="UserLanguages" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:org.vpc.neormf.commons.jwrapper.Locale">
+      <Item value="Name" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.String">
+      <Item value="Concat" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:org.vpc.neormf.wfs.util.SecurityBO">
+      <Item value="CallerPrincipalName" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Text.StringBuilder">
+      <Item value="ToString" priority="0" />
+      <Item value="Append" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Collections.IList">
+      <Item value="Add" priority="0" />
+      <Item value="Count" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Globalization.CultureInfo">
+      <Item value="DateTimeFormat" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Xml.XmlDocument">
+      <Item value="AppendChild" priority="0" />
+      <Item value="SelectNodes" priority="0" />
+      <Item value="InnerText" priority="0" />
+      <Item value="Save" priority="0" />
+      <Item value="CloneNode" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Console">
+      <Item value="WriteLine" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:org.vpc.neormf.commons.beans.PropertyList">
+      <Item value="GetType" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@">
+      <Item value="GetType" priority="2" />
+      <Item value="IndexOf" priority="1" />
+      <Item value="GetMember" priority="0" />
+      <Item value="Name" priority="0" />
+      <Item value="GetFields" priority="0" />
+      <Item value="Length" priority="0" />
+      <Item value="MoveNext" priority="0" />
+      <Item value="ToCharArray" priority="0" />
+      <Item value="GetDataClassName" priority="0" />
+      <Item value="StartsWith" priority="0" />
+      <Item value="EndsWith" priority="1" />
+      <Item value="SaveXml" priority="0" />
+      <Item value="GetString" priority="1" />
+      <Item value="Substring" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Type">
+      <Item value="IsAssignableFrom" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Collections.IDictionaryEnumerator">
+      <Item value="Key" priority="0" />
+      <Item value="Current" priority="0" />
+      <Item value="MoveNext" priority="0" />
+      <Item value="Value" priority="0" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+</Configuration>

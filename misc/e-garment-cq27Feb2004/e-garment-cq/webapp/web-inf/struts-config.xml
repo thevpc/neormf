@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+
+
+<!DOCTYPE struts-config PUBLIC
+
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+
+<struts-config>
+
+    <global-exceptions />
+
+    <global-forwards>
+        <forward name="error"  path="/standard_error.jsp"/>
+        <forward name="standard_error"  path="/standard_error.jsp"/>
+    </global-forwards >
+
+
+
+    <action-mappings>
+	    <action path="/loginAction"
+	            type="camaieu.egarmentcq.action.LogonAction"
+	    >
+    	    <forward name="ok"  path="/startup_redirect.jsp"/>
+	    </action>
+
+        <action path="/logoutAction"
+                type="camaieu.egarmentcq.action.LogoutAction"
+        >
+            <forward name="exit"  path="/exit.jsp"/>
+        </action>
+
+        <action path="/supplierSelectionAction"
+                type="camaieu.egarmentcq.action.SupplierSelectionAction"
+        >
+            <forward name="ok"  path="/supplier_main_menu.jsp"/>
+        </action>
+
+        <action path="/planningAction"
+                type="camaieu.egarmentcq.action.PlanningAction"
+        >
+            <forward name="ok"  path="/planning.jsp"/>
+            <forward name="text"  path="/planning_csv.jsp"/>
+            <forward name="error"  path="/standard_error.jsp"/>
+        </action>
+
+        <action path="/planningApplyAction"
+                type="camaieu.egarmentcq.action.PlanningApplyAction"
+        >
+            <forward name="ok"  path="/planning.jsp"/>
+            <forward name="error"  path="/planning.jsp"/>
+        </action>
+
+
+        <action path="/inspectionReportAction"
+                type="camaieu.egarmentcq.action.InspectionReportAction"
+        >
+            <forward name="ok"  path="/inspection_report.jsp"/>
+            <forward name="error"  path="/inspection_report.jsp"/>
+        </action>
+
+        <action path="/inspectionReportApplyAction"
+                type="camaieu.egarmentcq.action.InspectionReportApplyAction"
+        >
+            <forward name="ok"  path="/inspection_report.jsp"/>
+            <forward name="error"  path="/inspection_report.jsp"/>
+        </action>
+
+
+        <action path="/itemsDeliveryReceiptsAction"
+                type="camaieu.egarmentcq.action.ItemsDeliveryReceiptsAction"
+        >
+            <forward name="ok"  path="/items_delivery_receipts.jsp"/>
+            <forward name="error"  path="/items_delivery_receipts.jsp"/>
+        </action>
+
+        <action path="/itemsDeliveryReceiptsApplyAction"
+                type="camaieu.egarmentcq.action.ItemsDeliveryReceiptsApplyAction"
+        >
+            <forward name="ok"  path="/items_delivery_receipts.jsp"/>
+            <forward name="error"  path="/items_delivery_receipts.jsp"/>
+        </action>
+
+        <action path="/orderReportAction"
+                type="camaieu.egarmentcq.action.OrderReportAction"
+        >
+        </action>
+
+        <action path="/labelReportAction"
+                type="camaieu.egarmentcq.action.LabelReportAction"
+        >
+        </action>
+
+        <!--	    <action path="/Detail"-->
+<!--	            type="camaieu.formation.app.DetailAction"-->
+<!--	    >-->
+<!--	    <forward name="ok"              path="/detail.jsp"/>-->
+<!--	    </action>-->
+<!---->
+<!--	    <action path="/Update"-->
+<!--	            type="camaieu.formation.app.UpdateAction"-->
+<!--	    >-->
+<!--	    <forward name="ok"              path="/detail.jsp"/>-->
+<!--	    </action>-->
+
+    </action-mappings>
+
+
+
+
+<!-- ===================================== Controller Configuration -->
+
+
+
+    <controller
+
+       processorClass="org.apache.struts.tiles.TilesRequestProcessor"/>
+
+
+
+
+
+<!-- ================================ Message Resources Definitions -->
+
+
+
+    <message-resources parameter="resources.application"/>
+
+
+
+
+
+<!-- ======================================= Plug Ins Configuration -->
+
+
+
+  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+
+    <set-property
+
+        property="pathnames"
+
+        value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+
+  </plug-in>
+
+
+
+</struts-config>
+

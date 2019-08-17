@@ -1,0 +1,32 @@
+SELECT
+-- rst_dt_ctrl_source_reel,
+-- rst_dt_ctrl_source_labo,
+-- rst_qte_pres_ctrl_source,
+-- rst_qte_prel_ctrl_source,
+-- rst_dt_envoi_echant,
+-- rst_echant_scelle_01,
+-- rst_motif_scelle,
+-- rst_no_colis_echant,
+-- rst_ech_envoi_prest,
+-- rst_commentaire,
+-- rst_ok_ctrl_source,
+
+	rst_dt_ctrl_source_reel, rst_dt_ctrl_source_labo,
+    rst_qte_pres_ctrl_source, rst_qte_prel_ctrl_source,
+    rst_dt_envoi_echant, rst_echant_scelle_01,
+	rst_motif_scelle, rst_no_colis_echant, rst_dt_envoi_echant,
+	rst_commentaire, rst_ok_ctrl_source
+
+RST_CAM_CAT_DEP_CODE,
+RST_CAM_CAT_DEP_SOC_CODE,
+RST_CAM_NO_CMDE,
+RST_CAM_CAT_NO_VERSION,
+RST_CAM_NO_LIGNE,
+RST_CAM_ART_CODE,
+RST_CAM_ART_VAR1,
+RST_CAM_ART_VAR2,
+RST_CAM_ART_VAR3,
+RST_NO_CONTROLE
+
+FROM dt_recep_ctrl_source_tete
+WHERE RST_CAM_CAT_DEP_CODE = ? AND RST_CAM_CAT_DEP_SOC_CODE = ? AND RST_CAM_NO_CMDE = ? AND RST_CAM_CAT_NO_VERSION = ? AND RST_CAM_NO_LIGNE = ? AND RST_CAM_ART_CODE = ? AND RST_CAM_ART_VAR1 = ? AND RST_CAM_ART_VAR2 = ? AND RST_CAM_ART_VAR3 = ? AND RST_NO_CONTROLE = ? [0;java.lang.String,0001][1;java.lang.String,00][2;java.lang.Integer,451391][3;java.lang.Integer,0][4;java.lang.Integer,0][5;java.lang.String,413018][6;java.lang.String,0104][7;java.lang.String,-][8;java.lang.String,-][9;java.lang.Integer,1]

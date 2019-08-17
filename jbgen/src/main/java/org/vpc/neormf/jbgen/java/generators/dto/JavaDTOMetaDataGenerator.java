@@ -1,0 +1,291 @@
+/*
+ * CopyrightPlugin (c) 2004 Your Corporation. All Rights Reserved.
+ */
+package org.vpc.neormf.jbgen.java.generators.dto;
+
+import org.vpc.neormf.jbgen.JBGenMain;
+import org.vpc.neormf.jbgen.info.DAOInfo;
+import org.vpc.neormf.jbgen.dbsupport.DBColumn;
+import org.vpc.neormf.jbgen.projects.J2eeTarget;
+import org.vpc.neormf.jbgen.java.model.javaclass.JavaClassSource;
+import org.vpc.neormf.jbgen.java.model.javaclass.JavaField;
+import org.vpc.neormf.jbgen.java.model.javaclass.JavaMethod;
+import org.vpc.neormf.jbgen.java.generators.JBGenDAOGenerator;
+import org.vpc.neormf.jbgen.java.util.JavaUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import org.vpc.neormf.commons.beans.RelationInfo.Role;
+
+/**
+ * class presentation
+ *
+ * @author taha BEN SALAH (tbensalah)
+ * @version 1.0
+ * @copyrights (c) 2004, Vpc Open Source Foundary
+ * @project New Entreprise Object Relational Mapping Framework (neormf)
+ * @creation on Date: 24 mars 2004 Time: 17:11:33
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ */
+class JavaDTOMetaDataGenerator extends JBGenDAOGenerator {
+
+    public JavaDTOMetaDataGenerator(JBGenMain jbgen) {
+        super(jbgen);
+    }
+
+    public boolean accept(Connection connection, DAOInfo entityInfo) {
+        return (entityInfo.doGenerateBean(J2eeTarget.MODULE_DTO) //                || entityInfo.doGenerateTables("data")
+                /*|| entityInfo.doGenerateBean(J2eeTarget.MODULE_DAO)
+                || entityInfo.doGenerateBean(J2eeTarget.MODULE_EJB+".entity-cmp-remote")
+                || entityInfo.doGenerateBean(J2eeTarget.MODULE_EJB+".entity-bmp-remote")
+                || entityInfo.doGenerateBean(J2eeTarget.MODULE_EJB+".entity-cmp-local")
+                || entityInfo.doGenerateBean(J2eeTarget.MODULE_EJB+".entity-bmp-local")*/);
+    }
+
+    public void performExtraChecks(DAOInfo entityInfo) throws NoSuchElementException {
+        entityInfo.checkGenerateFilter(J2eeTarget.MODULE_DTO);
+    }
+
+    JavaClassSource theClass;
+    public void generate(Connection connection, DAOInfo entityInfo) throws SQLException, IOException {
+        File destFolder = new File(entityInfo.getProjectInfo().getModuleFolder(J2eeTarget.MODULE_DTO));
+        theClass = new JavaClassSource();
+        theClass.setComments(entityInfo.getComments());
+        theClass.setModifiers("public");
+        theClass.setName(entityInfo.getDTOMetaDataName());
+        theClass.setSuperClass("DTOMetaData");
+        theClass.setInterfaces(new String[]{"Cloneable"});
+        theClass.addImport("java.util.*");
+        theClass.addImport("org.vpc.neormf.commons.beans.*");
+        theClass.addImport("org.vpc.neormf.commons.util.*");
+        theClass.addImport("org.vpc.neormf.commons.types.*");
+        theClass.addImport("org.vpc.neormf.commons.types.converters.*");
+        theClass.addImport(entityInfo.getProjectInfo().getModulePackage() + "." + entityInfo.getProjectInfo().getModuleName());
+        //theClass.addImport(entityInfo.getProjectInfo().getModulePackage() + "." + entityInfo.getProjectInfo().getModuleName());
+
+        theClass.setPackage(entityInfo.getDataPackage());
+        DBColumn[] columns = entityInfo.getColumns(true, true, true);
+
+        for (int i = 0; i < columns.length; i++) {
+            DBColumn column = columns[i];
+            JavaField field = new JavaField(column.getBeanFieldConstant(),
+                    "DTOFieldMetaData",
+                    null,
+                    "public static final",getFieldInfoDeclaration(column)
+            );
+            theClass.addField(field);
+        }
+        StringBuilder sbfdefaultVal = new StringBuilder("{");
+        for (int i = 0; i < theClass.getFields().size(); i++) {
+            if (i > 0) {
+                sbfdefaultVal.append(",");
+            }
+            sbfdefaultVal.append(theClass.getField(i).getName());
+        }
+        sbfdefaultVal.append("}");
+        theClass.addField(new JavaField("_ALL_PROPERTIES",
+                "DTOFieldMetaData[]",
+                null,
+                "public static final",
+                sbfdefaultVal.toString()));
+
+        StringBuilder infoContent = new StringBuilder();
+        infoContent.append(" super( \n").append("// Bean Name\n").append("\"").append(entityInfo.getBeanName()).append("\"\n").append("// Bean Fields(name,title,column,type,sqlType,sqlConverter)...\n").append(",new DTOFieldMetaData[]{\n");
+        DBColumn[] pkColumns = entityInfo.getPrimaryKeys();
+        for (int i = 0; i < columns.length; i++) {
+            infoContent.append(columns[i].getBeanFieldConstant());
+            if ((i + 1) < columns.length) {
+                infoContent.append(",");
+            }
+            infoContent.append("\n");
+        }
+        infoContent.append("},\n");
+
+        infoContent.append("// Primary fields\n");
+        infoContent.append("new String[]{");
+        for (int i = 0; i < pkColumns.length; i++) {
+            infoContent.append("\"").append(pkColumns[i].getBeanFieldName()).append("\"");
+            if ((i + 1) < pkColumns.length) {
+                infoContent.append(",");
+            }
+        }
+        infoContent.append("},\n");
+
+
+        infoContent.append("// Title Field Name\n").append(entityInfo.getTitleFieldName() == null ? "null" : ('"' + entityInfo.getTitleFieldName() + '"')).append(",\n").append("// DataTransfertObject Class Name\n").append('"').append(entityInfo.getFullDTOName()).append("\",\n").append("// DataKey Class Name\n").append(entityInfo.getPrimaryKeys().length > 0 ? ('"' + entityInfo.getFullDataKeyName() + '"') : "null").append(",\n").append("// PropertyList Class Name\n").append('"').append(entityInfo.getFullPropertyListName()).append('"').append(",\n").append("// OrderList Class Name\n").append('"').append(entityInfo.getFullOrderListName()).append('"').append(",\n");
+        DAOInfo.OrdreInfo[] order = entityInfo.getOrder();
+        infoContent.append("// Default Order by fields\n");
+        if (order == null) {
+            infoContent.append("null,null,\n");
+        } else {
+            infoContent.append("new String[]{");
+            for (int i = 0; i < order.length; i++) {
+                if (i > 0) {
+                    infoContent.append("\n,");
+                }
+                infoContent.append("\"").append(order[i].fieldName).append("\"");
+            }
+            infoContent.append("},new boolean[]{");
+            for (int i = 0; i < order.length; i++) {
+                if (i > 0) {
+                    infoContent.append("\n,");
+                }
+                infoContent.append(order[i].isAsc);
+            }
+            infoContent.append("},\n");
+        }
+        infoContent.append("// Extra Properties\n");
+        infoContent.append("(Properties)Maps.fill(new Properties(),new Object[]{\n");
+        infoContent.append("  \"BeanName\",\n");
+        infoContent.append("  \"BusinessObjectName\",\n");
+        infoContent.append("  \"EntityHomeClassName\",\n");
+        infoContent.append("  \"EntityRemoteClassName\",\n");
+        infoContent.append("  \"BusinessDelegateClassName\"\n");
+        infoContent.append("},new Object[]{\n");
+        infoContent.append("  \"").append(entityInfo.getBeanName()).append("\",\n");
+        infoContent.append("  \"").append(entityInfo.getBOName()).append("\",\n");
+        infoContent.append("  \"").append(entityInfo.getFullEntityHomeName()).append("\",\n");
+        infoContent.append("  \"").append(entityInfo.getFullEntityRemoteName()).append("\",\n");
+        infoContent.append("  \"").append(entityInfo.getBOInfo().getFullConnectorName()).append("\"\n");
+        infoContent.append("}\n").append(")").append(");\n");
+
+        theClass.addField(new JavaField("_INSTANCE", entityInfo.getDTOMetaDataName(), null, "public static final", "new "+entityInfo.getDTOMetaDataName()+"()"));
+
+        theClass.addMethod(new JavaMethod(theClass.getName(), null, null, "private", null, "Constructor",infoContent.toString()));
+        JavaField field = null;
+        String cst = "";
+        String name = "";
+        for (int i = 0; i < columns.length; i++) {
+            field = new JavaField(columns[i].getBeanFieldName(),
+                    columns[i].getBusinessDataTypeName(),
+                    null,
+                    "private",
+                    null);
+            DBColumn column = columns[i];
+            name = column.getColumnName();
+            cst = entityInfo.getDTOName() + "." + columns[i].getBeanFieldConstant();
+//                        theClass.addField(field);
+            theClass.addMethod(new JavaMethod(JavaUtils.businessGetterName(columns[i]), "DTOFieldMetaData", null, "public",
+                    null, ("getter for " + field.getName())+"\n"+("@return value for the field"),
+                    "return " + column.getBeanFieldConstant() + ";"));
+        }
+
+//        StringBuffer getDataKeyBuffer=new StringBuffer();
+//        for(int i=0;i<pkColumns.length;i++){
+//            String cst=entityInfo.getDTOName()+"."+pkColumns[i].beanFieldConstant;
+//            getDataKeyBuffer.append("Object k"+i+"=super.getProperty("+cst+");\n");
+//            getDataKeyBuffer.append("if(k"+i+"==null){\n");
+//            getDataKeyBuffer.append("  return null;\n");
+//            getDataKeyBuffer.append("}\n");
+//        }
+//        getDataKeyBuffer.append("return new "+entityInfo.getDataKeyName()+"(");
+//        for(int i=0;i<pkColumns.length;i++){
+//            if(i>0){
+//                getDataKeyBuffer.append(",");
+//            }
+//            getDataKeyBuffer.append(Utils.objectToPrimitive("k"+i,
+//                    pkColumns[i].businessDataType.toJavaType().getName()
+//            ));
+//        }
+//        getDataKeyBuffer.append(");");
+//        theClass.addMethod(new JavaMethod("public", entityInfo.getDataKeyName(),
+//                "get"+entityInfo.getDataKeyName(), null, null, null,getDataKeyBuffer));
+
+        theClass.addMethod(createMethodInfo(entityInfo));
+        entityInfo.setGeneratedClass("DataTransfertObjectMetaData", theClass);
+        ArrayList arraySet = (ArrayList) entityInfo.getProjectInfo().getUserProperties().get("generatedClasses.DataTransfertObjectMetaData");
+        if (arraySet == null) {
+            arraySet = new ArrayList();
+            entityInfo.getProjectInfo().getUserProperties().put("generatedClasses.DataTransfertObjectMetaData", arraySet);
+        }
+        arraySet.add(theClass);
+//        JBGenUtils.askFileReadOnly(theClass.getFile(destFolder));
+        try {
+            if (theClass.rewrite(destFolder, getLog())) {
+                getLog().info(" generating DataTransfertObjectMetaData Class " + theClass.getPackage() + "." + theClass.getName() + " to " + destFolder.getCanonicalPath() + "...");
+            }
+            entityInfo.getProjectInfo().addGeneratedFile(theClass.getFile());
+        } catch (FileNotFoundException e) {
+            getLog().error("Readonly file : " + e);
+        }
+    }
+    public String getFieldInfoDeclaration(DBColumn column){
+        String businessDataTypeCode = JavaUtils.getImportedCode(column.getBusinessDataType());
+        String sqlDataTypeCode = JavaUtils.getImportedCode(column.getSqlDataType());
+        if (businessDataTypeCode.equals(sqlDataTypeCode)) {
+            businessDataTypeCode = "null";
+        }
+        DAOInfo entityInfo=column.getDAOInfo();
+        StringBuilder infoContent=new StringBuilder();
+        infoContent.append("new DTOFieldMetaData(\"").append(column.getBeanFieldName()).append("\", ").append("\"").append(column.getTitle()).append("\", ").append("\"").append(column.getColumnName()).append("\", ").append(businessDataTypeCode).append(",").append(sqlDataTypeCode).append(",").append((column.getSqlConverterFactory() == null ? "null" : column.getSqlConverterFactory().getConverterExpression()));
+        String modString = "";
+        modString = modString + (column.isRequiredOnInsert() ? ((modString.length() == 0 ? "" : "|") + "DTOFieldMetaData.REQUIRED_ON_INSERT") : "");
+        modString = modString + (column.isForbiddenOnInsert() ? ((modString.length() == 0 ? "" : "|") + "DTOFieldMetaData.FORBIDDEN_ON_INSERT") : "");
+        modString = modString + (column.isForbiddenOnUpdate() ? ((modString.length() == 0 ? "" : "|") + "DTOFieldMetaData.FORBIDDEN_ON_UPDATE") : "");
+        modString = modString + (column.isForbiddenOnSearch() ? ((modString.length() == 0 ? "" : "|") + "DTOFieldMetaData.FORBIDDEN_ON_SEARCH") : "");
+        modString = modString + (column.isAutoIdentity() ? ((modString.length() == 0 ? "" : "|") + "DTOFieldMetaData.AUTO_IDENTITY") : "");
+        modString = modString + (column.isFormulaImpl() ? ((modString.length() == 0 ? "" : "|") + "DTOFieldMetaData.FORMULA") : "");
+        modString = modString + (column.getRelation() != null ? ((modString.length() == 0 ? "" : "|") + "DTOFieldMetaData.RELATION_1N") : "");
+        modString = modString + (column.isPk() ? ((modString.length() == 0 ? "" : "|") + "DTOFieldMetaData.PRIMARY_KEY") : "");
+        if (modString.length() == 0) {
+            modString = "DTOFieldMetaData.DEFAULT";
+        }
+
+        infoContent.append(",").append(modString);
+        if(column.getRelationLinks().size()>0){
+            infoContent.append(",new RelationRoleIndex[]{");//
+            boolean firstrelationLink=true;
+            for (DBColumn.RelationLink relationLink : column.getRelationLinks()) {
+                if(firstrelationLink){
+                    firstrelationLink=false;
+                }else{
+                    infoContent.append(",");
+                }
+                if(relationLink.getRole()==Role.Foreign){
+                    infoContent.append("new RelationRoleIndex(").append(entityInfo.getProjectInfo().getModuleName()).append(".Relations.").append(relationLink.getRelation().getName()).append(".getForeignRole(),").append(relationLink.getIndex() - 1).append(")");
+                }else{
+                    infoContent.append("new RelationRoleIndex(").append(entityInfo.getProjectInfo().getModuleName()).append(".Relations.").append(relationLink.getRelation().getName()).append(".getPrimaryRole(),").append(relationLink.getIndex() - 1).append(")");
+                }
+            }
+            infoContent.append("}");
+        }else{
+            infoContent.append(",RelationRoleIndex.NO_ROLES");//
+
+        }
+        //infoContent.append(column.getRelation() == null ? "null" : entityInfo.getProjectInfo().getModuleName() + ".Relations." + column.getRelation().getName() + ".getFirstRole()");
+        infoContent.append(",").append(column.getPopulationOrder());//
+        if(column.getRequiredFields().length==0){
+            infoContent.append(",DTOFieldMetaData.NO_FIELDS_REQUIRED");//
+        }else{
+            infoContent.append(",new String[]{");
+            String[] requiredFields = column.getRequiredFields();
+            for (int i1 = 0; i1 < requiredFields.length; i1++) {
+                String s = requiredFields[i1];
+                DBColumn requiredColumn = entityInfo.getColumnByFieldName(s, true);
+                if (i1>0) {
+                    infoContent.append(",");
+                }
+                infoContent.append(JavaUtils.toStringLiteral(requiredColumn.getBeanFieldName()));
+            }
+            infoContent.append("}");
+        }
+        infoContent.append(")");
+        return infoContent.toString();
+    }
+
+    protected JavaMethod createMethodInfo(DAOInfo entityInfo) {
+        return new JavaMethod("instance", "DTOMetaData", null, "public", null, null, "return _INSTANCE;");
+    }
+
+
+    public String toString() {
+        return "DataTransfertObjectMetaData Generator";
+    }
+}

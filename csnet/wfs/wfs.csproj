@@ -1,0 +1,210 @@
+<VisualStudioProject>
+    <CSHARP
+        ProjectType = "Local"
+        ProductVersion = "7.10.3077"
+        SchemaVersion = "2.0"
+        ProjectGuid = "{A4C761F6-B853-4750-ADB1-D222B64FB88B}"
+    >
+        <Build>
+            <Settings
+                ApplicationIcon = ""
+                AssemblyKeyContainerName = ""
+                AssemblyName = "wfs"
+                AssemblyOriginatorKeyFile = ""
+                DefaultClientScript = "JScript"
+                DefaultHTMLPageLayout = "Grid"
+                DefaultTargetSchema = "IE50"
+                DelaySign = "false"
+                OutputType = "Library"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
+                RootNamespace = "wfs"
+                RunPostBuildEvent = "OnBuildSuccess"
+                StartupObject = ""
+            >
+                <Config
+                    Name = "Debug"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "DEBUG;TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "true"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "false"
+                    OutputPath = "bin\Debug\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+                <Config
+                    Name = "Release"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "TRACE"
+                    DocumentationFile = ""
+                    DebugSymbols = "false"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "true"
+                    OutputPath = "bin\Release\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+            </Settings>
+            <References>
+                <Reference
+                    Name = "System"
+                    AssemblyName = "System"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
+                />
+                <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                />
+                <Reference
+                    Name = "System.XML"
+                    AssemblyName = "System.Xml"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+                <Reference
+                    Name = "commons"
+                    Project = "{C7D7DFBC-8D7F-43C5-A5B6-80E7C1C35074}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "System.Windows.Forms"
+                    AssemblyName = "System.Windows.Forms"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+                />
+                <Reference
+                    Name = "log4net"
+                    AssemblyName = "log4net"
+                    HintPath = "..\..\..\..\..\dotnetbin\log4net\log4net.dll"
+                />
+                <Reference
+                    Name = "System.Drawing"
+                    AssemblyName = "System.Drawing"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
+                />
+            </References>
+        </Build>
+        <Files>
+            <Include>
+                <File
+                    RelPath = "AssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\SecurityBO.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\UIDTO.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\WFSApplication.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\WFSBusinessObject.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\BouncingProgressBar.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\BouncingProgressBar.resx"
+                    DependentUpon = "BouncingProgressBar.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\IProgressListener.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\IProgressTask.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\ListSelector.cs"
+                    SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\ListSelector.resx"
+                    DependentUpon = "ListSelector.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\ProgressDialog.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\ProgressDialog.resx"
+                    DependentUpon = "ProgressDialog.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\ProgressEvent.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\UserTextBoxColumn.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\components\UserTextBoxColumn.resx"
+                    DependentUpon = "UserTextBoxColumn.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\util\ModuleLog.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\util\TokenDesc.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\util\WFSConfig.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\org\vpc\neormf\wfs\util\WFSUtils.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+            </Include>
+        </Files>
+    </CSHARP>
+</VisualStudioProject>
+

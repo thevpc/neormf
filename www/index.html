@@ -1,0 +1,61 @@
+<html>
+<head>
+    <title>NEORMF</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<CENTER>
+    <h1>NEORMF</h1>
+
+    <h1><a href="http://neormf.dev.java.net"><font size=-1>New Entreprise Object Relational Mapping Framework</Font></a></h1>
+</CENTER>
+
+<p><B>neormf</B> (New Entreprise Object Relational Mapping Framework) is a <I>Bottom-Up Code Generation Framework</I> (From database schema to UI Components througth Business Components) for a number of languages/plateforms (actually Java/J2EE and C#/DotNet) and architectures, following main design patterns and frameworks.</p>
+The main ideas of neormf are :
+<UL>
+<LI>Simpilfy <I>From Scratch Application Development</I> Creating Canvas Components with useful operations according to a particular Architecture/Language/ Set of Design Patterns</LI>
+<LI>Simpilfy Updates/Customization/Refinement of Generated Files : Mixed Code (Generated and User defined)</LI>
+<LI>Separate Architecture/High Level Design Patterns Implementation From Businness Logic Development : developer not used to deal with J2EE and it's many design patterns will not have to. EJB Classes following the appropriate design patterns and all deployment files will be generated automatically. If we conceder it would be better to reimplement it in Plain JDBC Model, it would be as simple as to specify new <I>Projet Generation Pattern Target</I> (in code generation tool's config file) and re-run the tool. That's it.
+</LI>
+<LI>
+Give a simple Tool of code generation that is independent from target Language/Architecture/Design Patterns
+</LI>
+</UL>
+
+Indeed, using (almost) the same configuration files it would generate either a J2EE application components (EJB Entities, EJB Sessions "Facade", Value Objects...etc) or a DotNet Application (DTO, DAO and BO objects).
+<P>
+This project is based on three subprojects:
+<UL>
+<LI> <B>neormf-commons</B> : main/useful library with general classes and components (implemented in Java and C# dotnet)
+</LI>
+<LI> <B>neormf-jbgen</B> : (Java Bean Generator) Code Generation Tool based on an existing Database Schema (existing tables,views, procedures, etc.) and some configuration XML Files.
+</LI>
+<LI> <B>neormf-wws</B> : (Wise Web Support) web library to simplify Struts Forms usage with automatic binding with database/business constraints (i.e : varchar(20) column will be bound automatically to a text field with max length of 20)
+<LI> <B>neormf-wfs</B> : (Wise Forms Support) Rich Client library to simplify Swing/Window Forms usage with automatic binding with database/business constraints
+</LI>
+</UL>
+</P>
+
+
+<H2>Download latest release of DBClient</H2>
+<P>
+    Latest release is 0.1.0 <a href="http://neormf.dev.java.net/release/neormf-0.1.zip">here</a>.
+</P>
+
+<H2>Related Documents and Presentations</H2>
+<P>
+    <a href="http://neormf.dev.java.net/docs/Neormf.ppt">Neormf Presentation (French)</a>.
+</P>
+
+<H2>Requirements</H2>
+
+<P>
+    <a href="http://java.sun.com">Java Development Kit(JDK) 5</a> is required for running this tool.
+</P>
+
+<H2>Credits</Font></H2>
+<UL>
+    <LI>Main Developer : Taha BEN SALAH ( taha.bensalah@gmail.com)</LI>
+</UL>
+</HTML>

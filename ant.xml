@@ -1,0 +1,64 @@
+<project name="BUILD-NEORMF" default="make" basedir=".">
+    <!-- basedir is developpement -->
+    <!-- set global properties for this build -->
+    <property name="jarPrefix" value="neormf"/>
+    <property name="rootFolder" location="."/>
+    <property name="javabin" location="D:\DBClientPackage\javabin"/>
+    <property name="targetbuild_lin" location="${javabin}/vpc"/>
+    <!--<property name="sdk_home" location="${java.home}"/>-->
+
+    <target name="make" description="builds all jar on Windows">
+        <mkdir dir="${targetbuild_lin}"/>
+        <jar destfile="${targetbuild_lin}/src/${jarPrefix}-commons-src.jar">
+            <fileset dir="java/commons/src" excludes=".*"/>
+        </jar>
+        <jar destfile="${targetbuild_lin}/src/${jarPrefix}-commons-src.jar">
+            <fileset dir="java/commons/src" excludes=".*"/>
+        </jar>
+        <jar destfile="${targetbuild_lin}/src/${jarPrefix}-jbgen-src.jar">
+            <fileset dir="jbgen/src" excludes=".*"/>
+        </jar>
+        <jar destfile="${targetbuild_lin}/src/${jarPrefix}-wws-src.jar">
+            <fileset dir="java/wws/src" excludes=".*"/>
+        </jar>
+        <jar destfile="${targetbuild_lin}/${jarPrefix}-commons.jar">
+            <fileset dir="java/commons/build/classes" excludes=".*"/>
+        </jar>
+        <jar destfile="${targetbuild_lin}/${jarPrefix}-jbgen.jar">
+            <fileset dir="jbgen/build/classes" excludes=".*"/>
+        </jar>
+        <jar destfile="${targetbuild_lin}/${jarPrefix}-wws.jar">
+            <fileset dir="java/wws/build/classes" excludes=".*"/>
+        </jar>
+        <copy file="${targetbuild_lin}/${jarPrefix}-wws.jar" todir="deploy/neormf/java-lib"/>
+        <copy file="${targetbuild_lin}/${jarPrefix}-commons.jar" todir="deploy/neormf/java-lib"/>
+        <copy file="${targetbuild_lin}/${jarPrefix}-jbgen.jar" todir="deploy/neormf/lib"/>
+        <copy file="${targetbuild_lin}/src/${jarPrefix}-wws-src.jar" todir="deploy/neormf/src/java-lib"/>
+        <copy file="${targetbuild_lin}/src/${jarPrefix}-commons-src.jar" todir="deploy/neormf/src/java-lib"/>
+        <copy file="${targetbuild_lin}/src/${jarPrefix}-jbgen-src.jar" todir="deploy/neormf/src/jbgen"/>
+        <zip basedir="deploy" zipfile="www/neormf.zip"/>
+
+        <copy file="${targetbuild_lin}/${jarPrefix}-commons.jar" todir="java/commons/dist"/>
+        <copy file="${targetbuild_lin}/${jarPrefix}-wws.jar" todir="java/wws/dist"/>
+        <copy file="${targetbuild_lin}/${jarPrefix}-jbgen.jar" todir="jbgen/dist"/>
+        <copy file="${targetbuild_lin}/${jarPrefix}-commons.jar" todir="jbgen/dist/lib"/>
+    </target>
+
+    <target name="inc-build-count" description="builds the jar">
+        <java classname="vpccodetool">
+            <classpath path="${javabin}/vpc/vpc-devtools.jar"/>
+            <arg value="-debug=true"/>
+            <arg value="@"/>
+        </java>
+    </target>
+
+    <target name="build-vpccodetool-list" description="builds the jar">
+        <java classname="vpccodetool">
+            <classpath path="${javabin}/vpc/vpc-devtools.jar"/>
+            <arg value="-listfiles"/>
+            <arg value="."/>
+        </java>
+    </target>
+
+</project>
+

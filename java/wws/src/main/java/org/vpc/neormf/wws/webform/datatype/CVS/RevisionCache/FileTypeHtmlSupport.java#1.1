@@ -1,0 +1,39 @@
+package org.vpc.neormf.wws.webform.datatype;
+
+import org.vpc.neormf.commons.types.DataType;
+import org.vpc.neormf.commons.types.StringType;
+import org.vpc.neormf.wws.common.WUtils;
+import org.vpc.neormf.wws.html.HtmlWidget;
+import org.vpc.neormf.wws.html.HtmlText;
+import org.vpc.neormf.wws.html.HtmlTextArea;
+
+import javax.servlet.http.HttpServletRequest;
+import org.vpc.neormf.wws.html.HtmlFile;
+
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: vpc
+ * Date: 5 août 2005
+ * Time: 18:16:45
+ * To change this template use File | Settings | File Templates.
+ */
+public class FileTypeHtmlSupport extends DefaultDataTypeHtmlSupport {
+    public FileTypeHtmlSupport() {
+    }
+
+    public String convertObjectToHtmlString(Object v, DataType type, HttpServletRequest request) {
+        return v == null ? "" : v.toString();
+    }
+
+    public Object convertHtmlStringToObject(String[] s, DataType type, HttpServletRequest request) {
+        return (s[0]==null || s[0].length()==0)?null:s[0];
+    }
+
+    protected HtmlWidget generateHtmlEditor(String name, String[] value, DataType type, HttpServletRequest request) {
+        HtmlFile htmlText = new HtmlFile();
+        htmlText.setName(name);
+        htmlText.setValue(value[0]);
+        return htmlText;
+    }
+}

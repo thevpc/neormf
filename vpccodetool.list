@@ -1,0 +1,6 @@
+./java/wws/src/org/vpc/neormf/wws/WWSVersion.java
+./java/commons/src/org/vpc/neormf/commons/CommonsVersion.java
+./www/index.html
+./www/currentVersion.txt
+./deploy/neormf/currentVersion.txt
+./jbgen/src/org/vpc/neormf/jbgen/JBGenVersion.java

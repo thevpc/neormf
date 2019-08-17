@@ -1,0 +1,28 @@
+<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
+<idea-plugin>
+  <name>Neormf</name>
+  <description>Neormf Support Tool for Idea</description>
+  <version>0.1</version>
+  <vendor>vpc</vendor>
+  <idea-version since-build="3000"/>
+    <!--<application-components>-->
+        <!--<component>-->
+            <!--<implementation-class>org.vpc.neormf.idesupport.idea.NeormfApplication</implementation-class>-->
+        <!--</component>-->
+    <!--</application-components>-->
+    <!--<project-components>-->
+        <!--<component>-->
+            <!--<implementation-class>org.vpc.neormf.idesupport.idea.NeormfProject</implementation-class>-->
+        <!--</component>-->
+    <!--</project-components>-->
+    <!--<module-components>-->
+        <!--<component>-->
+            <!--<implementation-class>org.vpc.neormf.idesupport.idea.NeormfModule</implementation-class>-->
+        <!--</component>-->
+    <!--</module-components>-->
+    <!--<actions>-->
+        <!--<action id="org.vpc.neormf.NeormfAction" class="org.vpc.neormf.idesupport.idea.NeormfAction" text="Neormf">-->
+            <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
+        <!--</action>-->
+    <!--</actions>-->
+</idea-plugin>

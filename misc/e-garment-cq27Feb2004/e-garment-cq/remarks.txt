@@ -1,0 +1,62 @@
+* NODHOS
+orthographe : rcs_Nivel_Inspeccion dans DT_RECEP_CTRL_SOURCE
+
+* Framework
+-- java.lang.NullPointerException dans le fwk si la requete est incorrecte (Exception SQL)
+-- Problème si aucun primary key dans une table
+-- Problème avec les fields transient des DataObjects (si mis dans la session)
+-- le fwk est lourd pour des requêtes amenant des données de plusieurs tables à la fois
+
+
+* Améliorations Framework
+-- gestion de la base
+	-- introduire la notion de clef (setKey et getKey)
+	    * KeyCommande getKey()
+	    * setKey(KeyCommande)
+	-- introduire la notion de relation
+		(
+			* DataObject[] DoCommande.getLineCommandes()
+			* loadLigneCommande();
+			* KeyCommande DoLigneCommande.getCommand()
+			* KeyCommande DoLigneCommande.loadCommand()
+			    automatiquement / sur demande par un plugin eclipse
+		)
+	-- prévoir un générateur de DataObject pour une requête donnée
+-- gestion des erreurs
+	-- integration de la gestion des erreurs des champs dans le framework
+	-- message d'erreurs dans le fwk
+
+-- gestion des contraintes
+	-- gérer les contraintes (max lenght d'un champ texte par exemple...)
+	-- le plugin eclipse pourrait très bien générer les contraintes (au moins une partie) à partir de la base
+
+-- gestion html
+	-- il faut prévoir les outils (classes/méthodes) de génération de html pour les valeur des champs à afficher par exemple
+
+-- gestion csv
+	-- intégrer la gestion de csv (voir e-garment-cq)
+
+-- gestion de localisation
+	-- renommer les méthodes de camlang pour suivre les règles de nomenclatures Java
+	-- Messages à integrer dans le fwk ?
+	-- Messages doit pouvoir inclure plusieur fichiers (un fichier par type de messages)
+
+-- integrer les classes utilitaire de e-garment-cq dans le fwk
+	-- integrer les méthodes de QCUtils dans messages
+	-- integrer RecordEditorHelper,...
+
+-- divers
+    -- ne plus modifier directement les DataObjects mais en hériter et redéfinir les méthodes qu'il faut
+    pour cela il faut que les dataObject généré exposent (protected et non pas private) leurs attributs/méthodes
+
+	-- Améliorer ou remplacer la méthode valueOf de l’objet StringConverter du fwk
+
+    -- plusieurs classes pourraient être groupées
+        ex :
+            * StringParser, StringConverter, StrConvertor,StringUti
+            * BlobUti, ArrayUti ou alors ArrayUti et ArrayHelper
+    -- pour les classes FastArrayList/FastHashList et FastTreeMap il aurait mieux fallu utiliser
+            Map m=fast?new HashMap():new Hashtable();
+       ça aurait été de loin plus rapide et sans aucun dev supplémentaire
+
+-- il faut pouvoir capitalier les classes utilitaires des projet déjà faits

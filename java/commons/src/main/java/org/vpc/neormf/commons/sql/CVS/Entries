@@ -1,0 +1,22 @@
+/CodeLanguage.java/0/dummy timestamp/-kkv/
+/DAOCriteria.java/0/dummy timestamp/-kkv/
+/DAOFieldImpl.java/0/dummy timestamp/-kkv/
+/DAOFieldImplType.java/0/dummy timestamp/-kkv/
+/DAOFieldKind.java/0/dummy timestamp/-kkv/
+/DAOFieldMetaData.java/0/dummy timestamp/-kkv/
+/DAOFieldNoneImpl.java/0/dummy timestamp/-kkv/
+/DAOFieldSqlCallImpl.java/0/dummy timestamp/-kkv/
+/DAOFieldSqlDetailMasterRelation.java/0/dummy timestamp/-kkv/
+/DAOFieldSqlFunctionImpl.java/0/dummy timestamp/-kkv/
+/DAOFieldSqlMasterDetailRelation.java/0/dummy timestamp/-kkv/
+/DAOFieldSqlQueryImpl.java/0/dummy timestamp/-kkv/
+/DAOFieldSqlViewImpl.java/0/dummy timestamp/-kkv/
+/DAOFieldUserCodeImpl.java/0/dummy timestamp/-kkv/
+/DAOMetaData.java/0/dummy timestamp/-kkv/
+/DataAccessObject.java/1.1/Wed Apr 09 22:54:46 2008//
+/DataCache.java/1.1/Wed May 09 13:19:04 2007//
+/DriverNotFoundException.java/1.1/Mon Jul 11 17:28:24 2005//
+/SQLUtils.java/1.1/Wed Apr 09 16:56:28 2008//
+/SqlParam.java/1.1/Wed Apr 09 23:11:05 2008//
+/SqlStatementParamsProvider.java/1.1/Mon Jul 11 17:22:30 2005//
+/SqlString.java/1.1/Mon Jul 11 17:28:46 2005//

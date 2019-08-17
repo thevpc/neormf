@@ -1,0 +1,55 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package org.vpc.neormf.commons.beans;
+
+import org.vpc.neormf.commons.beans.RelationInfo.Cardinality;
+
+/**
+ *
+ * @author vpc
+ */
+public class RelationRoleInfo {
+    private RelationInfo relation;
+    private String roleName;
+    private RelationInfo.Cardinality cardinality;
+    private String dtoName;
+    private String fieldName;
+    private String referencedDTOName;
+
+    public RelationRoleInfo(RelationInfo relation, String roleName, Cardinality cardinality, String dtoName, String fieldName, String referencedDTOName) {
+        this.relation = relation;
+        this.roleName = roleName;
+        this.cardinality = cardinality;
+        this.dtoName = dtoName;
+        this.fieldName = fieldName;
+        this.referencedDTOName = referencedDTOName;
+    }
+
+    public Cardinality getCardinality() {
+        return cardinality;
+    }
+
+    public String getDtoName() {
+        return dtoName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public String getReferencedDTOName() {
+        return referencedDTOName;
+    }
+
+    public RelationInfo getRelation() {
+        return relation;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+    
+}

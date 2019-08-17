@@ -1,0 +1,20 @@
+package org.vpc.neormf.wws.html;
+
+/**
+ * Created by IntelliJ IDEA.
+ * User: vpc
+ * Date: 29 sept. 2005
+ * Time: 19:29:51
+ * To change this template use File | Settings | File Templates.
+ */
+public abstract class HtmlWidget {
+    public HtmlWidget() {
+    }
+
+    @Override
+    public String toString() {
+        return toHtml();
+    }
+
+    public abstract String toHtml();
+}

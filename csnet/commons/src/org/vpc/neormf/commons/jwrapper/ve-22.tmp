@@ -1,0 +1,75 @@
+using System;
+using System.Collections;
+using System.IO;
+using System.Xml;
+using org.vpc.neormf.commons.jwrapper;
+using org.vpc.neormf.commons.util;
+
+namespace commons.src.org.vpc.neormf.commons.jwrapper
+{
+	/// <summary>
+	/// Description résumée de XmlFileResourceBundle.
+	/// </summary>
+	public class XmlFileResourceBundle : ResourceBundle
+	{
+		Hashtable values=new Hashtable();
+		String file;
+		Locale locale;
+		public XmlFileResourceBundle(String file,Locale locale)
+		{
+			this.file=file;
+			this.locale=locale;
+			Load(file);
+		}
+
+		private void Load(String file)
+		{
+			int x=file.LastIndexOf('.');
+			if(x>0)
+			{
+				String before=file.Substring(0,x);
+				String after=file.Substring(x+1);
+				String theFile=before+'_'+locale.Name+'.'+after;
+				if(File.Exists(theFile))
+				{
+					Load0(theFile,true);
+				}
+				theFile=before+'.'+after;
+				if(File.Exists(theFile))
+				{
+					Load0(theFile,false);
+				}
+			}
+		}
+		
+		private void Load0(String file,bool doOverrideValues)
+		{
+			XmlDocument config = new XmlDocument();
+			config.Load(file);
+			foreach(XmlNode node in config.DocumentElement)
+			{
+				if("key".ToLower().Equals(node.Name))
+				{
+					String k=node.Attributes["name"].Value;
+					if(doOverrideValues || !values.ContainsKey(k))
+					{
+						values[node.Attributes["name"]]=XmlUtils.FromEscapeString(config.InnerText);	
+					}
+				}else if("module".ToLower().Equals(node.Name))
+				{
+					
+				}
+			}
+		}
+
+		public override String GetString(String key)
+		{
+			String v=(String)values[key];
+			if(v==null)
+			{
+				throw new MissingResourceException("Missing "+key);
+			}
+			throw new NotImplementedException();
+		}
+	}
+}

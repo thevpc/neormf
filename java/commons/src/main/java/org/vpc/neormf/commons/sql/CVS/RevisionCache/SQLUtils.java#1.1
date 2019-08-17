@@ -1,0 +1,623 @@
+package org.vpc.neormf.commons.sql;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.SQLException;
+import org.vpc.neormf.commons.types.DataType;
+import org.vpc.neormf.commons.util.PrimitiveArrayList;
+
+import java.lang.reflect.Field;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.text.SimpleDateFormat;
+import java.util.NoSuchElementException;
+import org.vpc.neormf.commons.beans.BlobData;
+
+/**
+ * Util class for SQL functions library
+ *
+ * @author taha BEN SALAH (tbsalah)
+ * @version 1.0
+ * @copyrights (c) 2004, Vpc Open Source Foundary
+ * @project New Entreprise Object Relational Mapping Framework (neormf)
+ * @creation on Date: 20 avr. 2004 Time: 15:27:00
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ * @modification on ---- by -----
+ */
+public final class SQLUtils {
+
+    public static final String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_PATTERN);
+
+    private SQLUtils() {
+    }
+
+//    public static Criteria toCriteria(DataTransfertObject dataContentPrototype, String tableAlias) {
+//        if (dataContentPrototype == null || dataContentPrototype.size() == 0) {
+//            return null;
+//        }
+//        StringBuffer sb = new StringBuffer();
+//        DataInfo dataInfo = dataContentPrototype.info();
+//        Criteria criteria = new Criteria();
+//        int pos = 1;
+//        for (Iterator i = dataContentPrototype.entrySet().iterator(); i.hasNext();) {
+//            Map.Entry entry = (Map.Entry) i.next();
+//            String key = (String) entry.getKey();
+//            Object value = (Object) entry.getValue();
+//            if (pos > 1) {
+//                sb.append(" AND ");
+//            }
+//            if (tableAlias != null) {
+//                sb.append(tableAlias).append(".");
+//            }
+//            DataField dataField = dataInfo.getField(key);
+//            if (value != null) {
+//                DataTypeConverter converter = dataField.getConverter();
+//                if (converter != null) {
+//                    value = converter.businessToSQL(value);
+//                }
+//            }
+//            if (value == null) {
+//                sb.append(dataField.getColumnName())
+//                        .append(" IS NULL ");
+//            } else {
+//                int type = dataField.getSqlType().getTypeId();
+//                switch (type) {
+//                    case StringType.TYPE:
+//                        {
+//                            sb.append(dataField.getColumnName())
+//                                    .append(" Like ")
+//                                    .append(" ? ");
+//                            criteria.setString(pos, String.valueOf(value) + "%");
+//                            break;
+//                        }
+//                    case IntType.TYPE:
+//                        {
+//                            sb.append(dataField.getColumnName())
+//                                    .append(" = ")
+//                                    .append(" ? ");
+//                            criteria.setInt(pos, ((Number) (value)).intValue());
+//                            break;
+//                        }
+//                    case DoubleType.TYPE:
+//                        {
+//                            sb.append(dataField.getColumnName())
+//                                    .append(" = ")
+//                                    .append(" ? ");
+//                            criteria.setDouble(pos, ((Number) (value)).doubleValue());
+//                            break;
+//                        }
+//                    case DateType.TYPE:
+//                        {
+//                            sb.append(dataField.getColumnName())
+//                                    .append(" = ")
+//                                    .append(" ? ");
+//                            criteria.setDate(pos, (Date) value);
+//                            break;
+//                        }
+//                    case DateTimeType.TYPE:
+//                        {
+//                            sb.append(dataField.getColumnName())
+//                                    .append(" = ")
+//                                    .append(" ? ");
+//                            criteria.setTimestamp(pos, (Timestamp) value);
+//                            break;
+//                        }
+//                    case TimeType.TYPE:
+//                        {
+//                            sb.append(dataField.getColumnName())
+//                                    .append(" = ")
+//                                    .append(" ? ");
+//                            criteria.setTimestamp(pos, (Timestamp) value);
+//                            break;
+//                        }
+//                    default :
+//                        {
+//                            throw new IllegalArgumentException("Unknown type");
+//                        }
+//                }
+//            }
+//            criteria.setWhereClause(sb.toString());
+//            pos++;
+//        }
+//        return criteria;
+//    }
+    public static int toSqlType(DataType dataType) {
+        return toSqlType(dataType.toJavaType());
+    }
+
+    public static String logQuery(String query, PrimitiveArrayList params) {
+        if (params != null && params.size() > 0) {
+            StringBuffer sb = new StringBuffer();
+            int max = query.length();
+            int paramPos = 0;
+            for (int i = 0; i < max; i++) {
+                char c = query.charAt(i);
+                switch (c) {
+                    case '?': {
+                        Object o = params.get(paramPos);
+                        if (o == null) {
+                            sb.append("null");
+                        } else if (o instanceof String) {
+                            sb.append(sqlStringVal((String) o));
+                        } else if (o instanceof Number) {
+                            sb.append(String.valueOf(o));
+                        } else if (o instanceof Timestamp) {
+                            sb.append(sqlTimestampVal((Timestamp) o));
+                        } else if (o instanceof java.util.Date) {
+                            sb.append(sqlTimestampVal(new Timestamp(((java.util.Date) o).getTime())));
+                        } else {
+                            sb.append("?<Unknown " + o + ">");
+                        }
+                        paramPos++;
+                        break;
+                    }
+                    default: {
+                        sb.append(c);
+                    }
+                }
+            }
+            return sb.toString();
+        } else {
+            return query;
+        }
+    }
+
+    public static String logQuery(String query) {
+        return query;
+    }
+
+    public static int toSqlType(Class javaType) {
+        if (javaType == String.class) {
+            return Types.VARCHAR;
+        } else if (javaType == Integer.class) {
+            return Types.INTEGER;
+        } else if (javaType == Long.class) {
+            return Types.BIGINT;
+        } else if (javaType == Double.class) {
+            return Types.DOUBLE;
+        } else if (javaType == Float.class) {
+            return Types.FLOAT;
+        } else if (javaType == Byte.class) {
+            return Types.TINYINT;
+        } else if (javaType == java.sql.Date.class) {
+            return Types.DATE;
+        } else if (javaType == java.sql.Time.class) {
+            return Types.TIME;
+        } else if (javaType == java.sql.Timestamp.class) {
+            return Types.TIMESTAMP;
+        } else {
+            throw new NoSuchElementException(javaType.getName());
+        }
+    }
+
+    public static String createSQLParamList(int size) {
+        StringBuffer sb = new StringBuffer("?");
+        for (int i = 1; i < size; i++) {
+            sb.append(",?");
+        }
+        return sb.toString();
+    }
+
+    public static int toSQLType(String sqlTypeName) {
+        sqlTypeName = sqlTypeName.toUpperCase();
+        if ("ARRAY".equals(sqlTypeName)) {
+            return Types.ARRAY;
+        } else if ("BIT".equals(sqlTypeName)) {
+            return Types.BIT;
+        } else if ("TINYINT".equals(sqlTypeName)) {
+            return Types.TINYINT;
+        } else if ("SMALLINT".equals(sqlTypeName)) {
+            return Types.SMALLINT;
+        } else if ("INTEGER".equals(sqlTypeName)) {
+            return Types.INTEGER;
+        } else if ("BIGINT".equals(sqlTypeName)) {
+            return Types.BIGINT;
+        } else if ("FLOAT".equals(sqlTypeName)) {
+            return Types.FLOAT;
+        } else if ("REAL".equals(sqlTypeName)) {
+            return Types.REAL;
+        } else if ("DOUBLE".equals(sqlTypeName)) {
+            return Types.DOUBLE;
+        } else if ("NUMERIC".equals(sqlTypeName)) {
+            return Types.NUMERIC;
+        } else if ("DECIMAL".equals(sqlTypeName)) {
+            return Types.DECIMAL;
+        } else if ("CHAR".equals(sqlTypeName)) {
+            return Types.CHAR;
+        } else if ("VARCHAR".equals(sqlTypeName)) {
+            return Types.VARCHAR;
+        } else if ("LONGVARCHAR".equals(sqlTypeName)) {
+            return Types.LONGVARCHAR;
+        } else if ("DATE".equals(sqlTypeName)) {
+            return Types.DATE;
+        } else if ("TIME".equals(sqlTypeName)) {
+            return Types.TIME;
+        } else if ("TIMESTAMP".equals(sqlTypeName)) {
+            return Types.TIMESTAMP;
+        } else if ("BINARY".equals(sqlTypeName)) {
+            return Types.BINARY;
+        } else if ("VARBINARY".equals(sqlTypeName)) {
+            return Types.VARBINARY;
+        } else if ("LONGVARBINARY".equals(sqlTypeName)) {
+            return Types.LONGVARBINARY;
+        } else if ("NULL".equals(sqlTypeName)) {
+            return Types.NULL;
+        } else if ("OTHER".equals(sqlTypeName)) {
+            return Types.OTHER;
+        } else if ("JAVA_OBJECT".equals(sqlTypeName) || "OBJECT".equals(sqlTypeName)) {
+            return Types.JAVA_OBJECT;
+        } else if ("DISTINCT".equals(sqlTypeName)) {
+            return Types.DISTINCT;
+        } else if ("STRUCT".equals(sqlTypeName)) {
+            return Types.STRUCT;
+        } else if ("ARRAY".equals(sqlTypeName)) {
+            return Types.ARRAY;
+        } else if ("BLOB".equals(sqlTypeName)) {
+            return Types.BLOB;
+        } else if ("CLOB".equals(sqlTypeName)) {
+            return Types.CLOB;
+        } else if ("REF".equals(sqlTypeName)) {
+            return Types.REF;
+//        } else if ("DATALINK".equals(sqlTypeName)) {
+//            return Types.DATALINK;
+//        } else if ("BOOLEAN".equals(sqlTypeName)) {
+//            return Types.BOOLEAN;
+        } else {
+            throw new NoSuchElementException(sqlTypeName);
+        }
+    }
+
+    public static String getTypeName(int type) {
+        Field[] f = Types.class.getFields();
+        for (int i = 0; i < f.length; i++) {
+            try {
+                if (f[i].getInt(null) == type) {
+                    return f[i].getName();
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e.toString());
+            }
+        }
+        return "<<UNKNOWN:" + type + ">>";
+    }
+
+    public static int getTypeByName(String name) {
+        try {
+            return Types.class.getField(name).getInt(null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e.toString());
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e.toString());
+        }
+    }
+
+    public static String getPreparedStatementMethodSetterName(int type) {
+        switch (type) {
+            case Types.ARRAY: {
+                return "setArray";
+            }
+            case Types.BIGINT: {
+                return "setBigDecimal";
+            }
+            case Types.BINARY: {
+                return "setBinaryStream";
+            }
+            case Types.BIT: {
+                return "setBoolean";
+            }
+            case Types.BLOB: {
+                return "setBlob";
+
+            }
+//            case Types.BOOLEAN:
+//                {
+//                    return "setBoolean";
+//                }
+//            case Types.DATALINK:
+//                {
+//                    throw new IllegalArgumentException("Not supported DATALINK ");
+//                }
+            case Types.CHAR: {
+                return "setString";
+            }
+            case Types.CLOB: {
+                return "setClob";
+
+            }
+            case Types.DATE: {
+                return "setDate";
+            }
+            case Types.DECIMAL: {
+                return "setDouble";
+            }
+            case Types.DISTINCT: {
+                throw new IllegalArgumentException("Not supported DISTINCT");
+            }
+            case Types.DOUBLE: {
+                return "setDouble";
+            }
+            case Types.FLOAT: {
+                return "setFloat";
+            }
+            case Types.INTEGER: {
+                return "setInt";
+            }
+            case Types.JAVA_OBJECT: {
+                return "setObject";
+            }
+            case Types.LONGVARBINARY: {
+                return "setBinaryStream";
+            }
+            case Types.LONGVARCHAR: {
+                return "setBinaryStream";
+            }
+            case Types.NULL: {
+                return "setNull";
+            }
+            case Types.NUMERIC: {
+                return "setDouble";
+            }
+            case Types.REAL: {
+                return "setDouble";
+            }
+            case Types.SMALLINT: {
+                return "setInt";
+            }
+            case Types.STRUCT: {
+                return "setObject";
+            }
+            case Types.TIME: {
+                return "setTime";
+            }
+            case Types.TIMESTAMP: {
+                return "setTimestamp";
+            }
+            case Types.TINYINT: {
+                return "setInt";
+            }
+            case Types.VARBINARY: {
+                return "setBinaryStream";
+            }
+            case Types.VARCHAR: {
+                return "setString";
+            }
+        }
+        throw new NoSuchElementException("No Type " + type);
+    }
+
+    public static String getPreparedStatementMethodGetterName(int type) {
+        switch (type) {
+            case Types.ARRAY: {
+                return "getArray";
+            }
+            case Types.BIGINT: {
+                return "getBigDecimal";
+            }
+            case Types.BINARY: {
+                return "getBinaryStream";
+            }
+            case Types.BIT: {
+                return "getBoolean";
+            }
+            case Types.BLOB: {
+                return "getBlob";
+
+            }
+//            case Types.BOOLEAN:
+//                {
+//                    return "getBoolean";
+//                }
+//            case Types.DATALINK:
+//                {
+//                    throw new IllegalArgumentException("Not supported DATALINK ");
+//                }
+            case Types.CHAR: {
+                return "getString";
+            }
+            case Types.CLOB: {
+                return "getClob";
+
+            }
+            case Types.DATE: {
+                return "getDate";
+            }
+            case Types.DECIMAL: {
+                return "getDouble";
+            }
+            case Types.DISTINCT: {
+                throw new IllegalArgumentException("Not supported DISTINCT");
+            }
+            case Types.DOUBLE: {
+                return "getDouble";
+            }
+            case Types.FLOAT: {
+                return "getFloat";
+            }
+            case Types.INTEGER: {
+                return "getInt";
+            }
+            case Types.JAVA_OBJECT: {
+                return "getObject";
+            }
+            case Types.LONGVARBINARY: {
+                return "getBinaryStream";
+            }
+            case Types.LONGVARCHAR: {
+                return "getBinaryStream";
+            }
+            case Types.NULL: {
+                return "getNull";
+            }
+            case Types.NUMERIC: {
+                return "getDouble";
+            }
+            case Types.REAL: {
+                return "getDouble";
+            }
+            case Types.SMALLINT: {
+                return "getInt";
+            }
+            case Types.STRUCT: {
+                return "getObject";
+            }
+            case Types.TIME: {
+                return "getTime";
+            }
+            case Types.TIMESTAMP: {
+                return "getTimestamp";
+            }
+            case Types.TINYINT: {
+                return "getInt";
+            }
+            case Types.VARBINARY: {
+                return "getBinaryStream";
+            }
+            case Types.VARCHAR: {
+                return "getString";
+            }
+        }
+        throw new NoSuchElementException("No Type " + type);
+    }
+
+    public static String sqlStringVal(String val) {
+        if (val == null) {
+            return "NULL";
+        }
+        StringBuffer sb = new StringBuffer();
+        sb.append("'");
+        for (int i = 0; i < val.length(); i++) {
+            char c = val.charAt(i);
+            if (c == '\'') {
+                sb.append("'");
+            }
+            sb.append(c);
+        }
+        sb.append("'");
+        return sb.toString();
+    }
+
+    public static String sqlTimestampVal(Timestamp timestampVal) {
+        if (timestampVal == null) {
+            return "NULL";
+        }
+        String val = DATE_FORMAT.format(timestampVal);
+        StringBuffer sb = new StringBuffer();
+        sb.append("'");
+        for (int i = 0; i < val.length(); i++) {
+            char c = val.charAt(i);
+            if (c == '\'') {
+                sb.append("'");
+            }
+            sb.append(c);
+        }
+        sb.append("'");
+        return "TO_DATE(" + sb.toString() + ",'" + DATE_FORMAT_PATTERN + "')";
+    }
+
+    public static void writeBlobData(BlobData blob, PreparedStatement ps, int pos) throws SQLException, IOException {
+        if (blob == null) {
+            ps.setBytes(pos, new byte[0]);
+        } else {
+            long longLength = blob.getLength();
+            long truncatedLength = (int) longLength;
+            if (longLength == truncatedLength) {
+                InputStream is = blob.getInputStream();
+                ps.setBinaryStream(pos, is,(int)truncatedLength);
+            }else{
+                throw new SQLException(SQLUtils.class.getName()+" : Net Yet supported Too Long Blobs");
+            }
+        }
+    }
+}
+
+//
+//switch(type){
+//    case Types.ARRAY :{
+//
+//    }
+//    case Types.BIGINT :{
+//
+//    }
+//    case Types.BINARY :{
+//
+//    }
+//    case Types.BIT  :{
+//
+//    }
+//    case Types.BLOB  :{
+//
+//    }
+//    case Types.BOOLEAN  :{
+//
+//    }
+//    case Types.CHAR  :{
+//
+//    }
+//    case Types.CLOB  :{
+//
+//    }
+//    case Types.DATALINK  :{
+//
+//    }
+//    case Types.DATE  :{
+//
+//    }
+//    case Types.DECIMAL  :{
+//
+//    }
+//    case Types.DISTINCT  :{
+//
+//    }
+//    case Types.DOUBLE  :{
+//
+//    }
+//    case Types.FLOAT  :{
+//
+//    }
+//    case Types.INTEGER  :{
+//
+//    }
+//    case Types.JAVA_OBJECT  :{
+//
+//    }
+//    case Types.LONGVARBINARY  :{
+//
+//    }
+//    case Types.LONGVARCHAR  :{
+//
+//    }
+//    case Types.NULL  :{
+//
+//    }
+//    case Types.NUMERIC  :{
+//
+//    }
+//    case Types.REAL  :{
+//
+//    }
+//    case Types.SMALLINT :{
+//
+//    }
+//    case Types.STRUCT :{
+//
+//    }
+//    case Types.TIME :{
+//
+//    }
+//    case Types.TIMESTAMP :{
+//
+//    }
+//    case Types.TINYINT :{
+//
+//    }
+//    case Types.VARBINARY :{
+//
+//    }
+//    case Types.VARCHAR :{
+//
+//    }
+//}
+

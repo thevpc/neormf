@@ -1,0 +1,93 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package org.vpc.neormf.commons.beans;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.sql.Blob;
+import java.sql.SQLException;
+import org.vpc.neormf.commons.util.IOUtils;
+
+/**
+ *
+ * @author vpc
+ */
+public class BlobData implements Serializable{
+    private File file;
+    private File tempFile;
+    private byte[] bytes;
+    private long length;
+
+    public BlobData(File file) {
+        this.file=file;
+    }
+
+    public BlobData(byte[] bytes) {
+        this.bytes = bytes;
+    }
+    
+    
+    public BlobData(Blob blob,File tempFolder) throws SQLException,IOException{
+        length=blob.length();
+        long ll=(int)length;
+        if(ll!=length){
+            //use tempFile;
+            InputStream fis=null;
+            try{
+               tempFile=File.createTempFile("BlobData_", ".tmp",tempFolder);
+               IOUtils.copy(fis=blob.getBinaryStream(), tempFile);
+            }finally{
+                if(fis!=null){
+                    fis.close();
+                }
+            }
+        }else{
+            bytes=blob.getBytes(0, (int)length);
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if(tempFile!=null){
+            tempFile.delete();
+        }
+    }
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public long getLength() {
+        return length;
+    }
+
+    public File getTempFile() {
+        return tempFile;
+    }
+    
+    public InputStream getInputStream() throws IOException{
+        if(tempFile!=null){
+            return new FileInputStream(tempFile);
+        }else if(file!=null){
+            return new FileInputStream(file);
+        }else if(bytes!=null){
+            return new ByteArrayInputStream(bytes);
+        }else{
+            return new ByteArrayInputStream(new byte[0]);
+        }
+    }
+    
+    
+}

@@ -1,0 +1,28 @@
+Body {
+	Font-Family: Arial;
+}
+TH {
+	Font-Size: 12px;
+	Font-Weight: Bold;
+}
+TD {
+	Font-Size: 12px;
+}
+A {
+	Color: #800080;
+}
+.pageTitre { font-size: 24px; font-weight: Bold; color: #FF6DAB;}
+.tableauTitre {  color: #800080; text-align: center; font-size: 18px; font-weight: bold}
+.menu {  color: #800080; background-color: #FFD9FF ; font-weight: bold}
+.menuSelectionne {  color: #FFD9FF; background-color: #800080; font-weight: bold}
+.titreListe {  font-size: small; background-color: #F5D0AF; font-weight: bold}
+.ligneListe {  font-size: small; background-color: #FAE4D1}
+.bouton {  cursor: hand}
+.detailRar {  font-size: small; background-color: #FFD5D5}
+.detailDispo {  font-size: small; background-color: #DFEFFF}
+.detailExpedie {  font-size: small; background-color: #CEFFCE}
+.erreur {  color: #800080; font-weight: bold}
+.nomFournisseur {  font-size: 15px;}
+.inp1 { background:#FAE4D1; color:#800080; font-weight:bold; border-style:dotted; border-color=#FAE4D1; font-size: 8pt;}
+.inp2 { font-size: 8pt }
+.lienMenu { font-size: 14px; }
