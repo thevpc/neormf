@@ -170,11 +170,11 @@ public class SqlString implements Serializable {
         newSqlString = new SqlString(sb.toString());
         int pos = 1;
         for (int i = 0; i < params.size(); i++) {
-            newSqlString.params.put(new Integer(pos), params.get(new Integer(i + 1)));
+            newSqlString.params.put(new Integer(pos), params.get((i + 1)));
             pos++;
         }
         for (int i = 0; i < other.params.size(); i++) {
-            SqlParam p=(SqlParam) other.params.get(new Integer(i + 1));
+            SqlParam p=(SqlParam) other.params.get((i + 1));
             p.setPos(pos);
             newSqlString.params.put(new Integer(pos), p);
             pos++;

@@ -26,7 +26,7 @@ public class BoXnArt extends BoEasyAncestorBean {
     private static Category log = Category.getInstance(BoXnArt.class.getName());
 
     /**
-     * constructeur par défaut
+     * constructeur par dï¿½faut
      */
     public BoXnArt() {
         super(DoXnArt.class, EGCQBusinessConstants.DATASOURCE_NAME);
@@ -37,7 +37,7 @@ public class BoXnArt extends BoEasyAncestorBean {
             if(art.getArtVar2()==null || "-".equals(art.getArtVar2())){
                 DataObject[][] lines = retrieve(
                         EGCQBusinessConstants.DATASOURCE_NAME,
-                        //requête
+                        //requï¿½te
                         "select * " +
                         "from xn_art " +
                         "where " +
@@ -59,7 +59,7 @@ public class BoXnArt extends BoEasyAncestorBean {
 //        try {
 //            Object[][] lines = retrieve(
 //                    EGCQBusinessConstants.DATASOURCE_NAME,
-//                    //requête
+//                    //requï¿½te
 //                    "select " +
 //                    "art_gencod, tai_lib " +
 //                    "from " +
@@ -89,7 +89,7 @@ public class BoXnArt extends BoEasyAncestorBean {
 //        }
 //    }
 //    /**
-//     * code à barre
+//     * code ï¿½ barre
 //     * @param art
 //     * @return
 //     * @throws MetierException
@@ -117,7 +117,7 @@ public class BoXnArt extends BoEasyAncestorBean {
         try {
             Object[][] lines = retrieve(
                     EGCQBusinessConstants.DATASOURCE_NAME,
-                    //requête
+                    //requï¿½te
                     "select " +
                     "tai_lib " +
                     "from " +
@@ -144,8 +144,8 @@ public class BoXnArt extends BoEasyAncestorBean {
 
     /**
      * les valeurs des entretiens en tableau 2d
-     * <BR> la 1ere colonne étant eru_lib
-     * <BR> la 2eme colonne étant erv_lib
+     * <BR> la 1ere colonne ï¿½tant eru_lib
+     * <BR> la 2eme colonne ï¿½tant erv_lib
      * @param art dataObject contenant la clef
      * @return
      * @throws MetierException
@@ -193,8 +193,8 @@ public class BoXnArt extends BoEasyAncestorBean {
 
     /**
      * les valeurs des compositions en tableau 2d
-     * <BR> la 1ere colonne étant com_pourcent
-     * <BR> la 2eme colonne étant mat_lib
+     * <BR> la 1ere colonne ï¿½tant com_pourcent
+     * <BR> la 2eme colonne ï¿½tant mat_lib
      * @param art dataObject contenant la clef
      * @return
      * @throws MetierException
@@ -236,7 +236,7 @@ public class BoXnArt extends BoEasyAncestorBean {
                                 ")" +
                                 ") and " +
                                 "com_no = ? and com_mat_code = mat_code and art_gencod = ?",
-                                new Object[]{new Integer(i + 1), eanCode}
+                                new Object[]{(i + 1), eanCode}
                         );
                     } else {
                         //english
@@ -261,7 +261,7 @@ public class BoXnArt extends BoEasyAncestorBean {
                                 "art_var2 = ? and " +
                                 "art_var3 = ?"
                                 ,
-                                new Object[]{new Integer(i + 1), baseLang, art.getArtCode(), art.getArtVar1(), art.getArtVar2(), art.getArtVar3()}
+                                new Object[]{(i + 1), baseLang, art.getArtCode(), art.getArtVar1(), art.getArtVar2(), art.getArtVar3()}
                         );
                     }
                     if (lines.length == 0) {
@@ -359,9 +359,9 @@ public class BoXnArt extends BoEasyAncestorBean {
     }
 
     /**
-     * les informations des étiquettes
+     * les informations des ï¿½tiquettes
      * @param art le dataObject contenant la clef
-     * @return les informations des étiquettes
+     * @return les informations des ï¿½tiquettes
      * @throws MetierException
      */
     public LabelReport.LabelReportData getLabelReportData(DoXnArt art, String lang) throws MetierException {

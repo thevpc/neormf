@@ -228,11 +228,11 @@ class JavaD0ZFilterGenerator extends JBGenDAOGenerator {
                                 "        newCriteria.joins = sb.length() == 0 ? null : sb.toString();\n" +
                                 "        int pos = 1;\n" +
                                 "        for (int i = 0; i < params.size(); i++) {\n" +
-                                "            newCriteria.params.put(new Integer(pos), params.get(new Integer(i + 1)));\n" +
+                                "            newCriteria.params.put(new Integer(pos), params.get((i + 1)));\n" +
                                 "            pos++;\n" +
                                 "        }\n" +
                                 "        for (int i = 0; i < other.params.size(); i++) {\n" +
-                                "            SqlParam p = (SqlParam) other.params.get(new Integer(i + 1));\n" +
+                                "            SqlParam p = (SqlParam) other.params.get((i + 1));\n" +
                                 "            p.setPos(pos);\n" +
                                 "            newCriteria.params.put(new Integer(pos), p);\n" +
                                 "            pos++;\n" +
